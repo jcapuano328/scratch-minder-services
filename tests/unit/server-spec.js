@@ -2,10 +2,8 @@
 var chai = require('chai'),
 	expect = chai.expect,
 	sinon = require('sinon'),
-	sandbox = require('sandboxed-module'),
-	path = require('path');
+	sandbox = require('sandboxed-module');
 chai.use(require('sinon-chai'));
-var promise = require('../mocks/promise.js');
 
 describe('Server', () => {
 	var env = {};
@@ -49,12 +47,12 @@ describe('Server', () => {
 
     describe('start', () => {
         describe('success', () => {
-            beforeEach(() => {
+            beforeEach((done) => {
                 env.router.register.returns(Promise.resolve());
                 env.restifyServer.listen.yields(null);
-                return env.server.start();
-    			//.then(() => { done(); })
-    			//.catch(done);
+                env.server.start()
+    			.then(() => { done(); })
+    			.catch(done);
             });
             it('should create the restify server', () => {
                 expect(env.restify.createServer).to.have.been.calledOnce;
@@ -110,10 +108,53 @@ describe('Server', () => {
             });
         });
 
+        describe('port conflict', () => {
+            beforeEach((done) => {
+                env.router.register.returns(Promise.resolve());
+                env.restifyServer.listen.throws('port conflict');
+                env.server.start()
+    			.then(() => { done('should have throw an exception'); })
+    			.catch((err) => { expect(err.name).to.equal('port conflict'); done();});
+            });
+            it('should create the restify server', () => {
+                expect(env.restify.createServer).to.have.been.calledOnce;
+            });
+            it('should use the query parser', () => {
+                expect(env.restify.queryParser).to.have.been.calledOnce;
+                expect(env.restifyServer.use).to.have.been.calledWith('queryparser');
+            });
+            it('should use the body parser', () => {
+                expect(env.restify.bodyParser).to.have.been.calledOnce;
+                expect(env.restifyServer.use).to.have.been.calledWith('bodyparser');
+            });
+            it('should use the gzip response', () => {
+                expect(env.restify.gzipResponse).to.have.been.calledOnce;
+                expect(env.restifyServer.use).to.have.been.calledWith('gzipresponse');
+            });
+            it('should register the routes', () => {
+                expect(env.router.register).to.have.been.calledOnce;
+            });
+            it('should listen on the proper port', () => {
+                expect(env.restifyServer.listen).to.have.been.calledOnce;
+                expect(env.restifyServer.listen).to.have.been.calledWith(env.config.port);
+            });
+        });
+
         //it('should accept connections');
     });
 
     describe('stop', () => {
-        it('should stop listening');
+        beforeEach(() => {
+            env.router.register.returns(Promise.resolve());
+            env.restifyServer.listen.yields(null);
+            env.restifyServer.close.yields(null);
+            return env.server.start()
+            .then(() => {
+                return env.server.stop();
+            });
+        });
+        it('should stop listening', () => {
+            expect(env.restifyServer.close).to.have.been.calledOnce;
+        });
     });
 });
