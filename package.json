@@ -1,0 +1,42 @@
+{
+  "name": "scratch-minder-services",
+  "version": "0.0.1",
+  "description": "service layer for scratch-minder",
+  "main": "main.js",
+  "scripts": {
+    "start": "node main.js",
+    "test": "node ./node_modules/mocha/bin/mocha ./tests",
+    "debug": "node-debug node_modules/mocha/bin/_mocha tests/unit/server-spec.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jcapuano328/scratch-minder-services.git"
+  },
+  "keywords": [
+    "rest",
+    "oauth"
+  ],
+  "author": "jeff capuano",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jcapuano328/scratch-minder-services/issues"
+  },
+  "homepage": "https://github.com/jcapuano328/scratch-minder-services#readme",
+  "dependencies": {
+    "colors": "^1.1.2",
+    "config": "^1.17.1",
+    "file": "^0.2.2",
+    "kerberos": "0.0.17",
+    "lodash": "^3.10.1",
+    "mongodb": "^2.0.52",
+    "restify": "^4.0.3"
+  },
+  "devDependencies": {
+    "chai": "^3.4.1",
+    "mocha": "^2.3.4",
+    "sandboxed-module": "^2.0.3",
+    "sinon": "^1.17.2",
+    "sinon-chai": "^2.8.0",
+    "supertest": "^1.1.0"
+  }
+}
