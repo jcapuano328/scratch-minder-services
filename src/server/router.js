@@ -1,7 +1,7 @@
 'use strict'
 var config = require('config'),
     file = require('file'),
-    log = require('./log');
+    log = require('../lib/log');
 
 var methods = ['post', 'get', 'put', 'del'];
 

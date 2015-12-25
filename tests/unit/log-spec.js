@@ -34,7 +34,7 @@ describe('log service', () => {
         env.colors.error.returnsArg(0);
         env.colors.fatal.returnsArg(0);
 
-		env.logger = sandbox.require('../../lib/log.js', {
+		env.logger = sandbox.require('../../src/lib/log.js', {
         	requires : {
 				'config': env.config,
                 'colors': env.colors,
@@ -64,7 +64,7 @@ describe('log service', () => {
 	    		describe('levels', () => {
 		        	beforeEach(() => {
 	                	env.config.log.server.levels = ['foo', 'bar', 'wth'];
-						env.logger = sandbox.require('../../lib/log.js', {
+						env.logger = sandbox.require('../../src/lib/log.js', {
 				        	requires : {
 								'config': env.config,
 								'colors': env.colors,
@@ -105,7 +105,7 @@ describe('log service', () => {
         describe('custom', () => {
         	beforeEach(() => {
             	env.config.log.server.expressFormat = 'dev';
-				env.logger = sandbox.require('../../lib/log.js', {
+				env.logger = sandbox.require('../../src/lib/log.js', {
 		        	requires : {
 						'config': env.config,
                         'colors': env.colors,
@@ -142,7 +142,7 @@ describe('log service', () => {
                         enabled: false
 			        }
                 };
-				env.logger = sandbox.require('../../lib/log.js', {
+				env.logger = sandbox.require('../../src/lib/log.js', {
 		        	requires : {
 						'config': env.config,
                         'colors': env.colors,
@@ -167,7 +167,7 @@ describe('log service', () => {
 	                        level: 'info'
 				        }
 	                };
-					env.logger = sandbox.require('../../lib/log.js', {
+					env.logger = sandbox.require('../../src/lib/log.js', {
 			        	requires : {
 							'config': env.config,
                             'colors': env.colors,
@@ -191,7 +191,7 @@ describe('log service', () => {
 	                        level: 'info'
 				        }
 	                };
-					env.logger = sandbox.require('../../lib/log.js', {
+					env.logger = sandbox.require('../../src/lib/log.js', {
 			        	requires : {
 							'config': env.config,
                             'colors': env.colors,
@@ -217,7 +217,7 @@ describe('log service', () => {
 	                        format: ['level', 'message', 'user', 'platform']
 				        }
 	                };
-					env.logger = sandbox.require('../../lib/log.js', {
+					env.logger = sandbox.require('../../src/lib/log.js', {
 			        	requires : {
 							'config': env.config,
                             'colors': env.colors,
@@ -245,7 +245,7 @@ describe('log service', () => {
 	                        format: ['level', 'message', 'user', 'platform']
 				        }
 	                };
-					env.logger = sandbox.require('../../lib/log.js', {
+					env.logger = sandbox.require('../../src/lib/log.js', {
 			        	requires : {
 							'config': env.config,
                             'colors': env.colors,
@@ -294,7 +294,7 @@ describe('log service', () => {
 	                        json: true
 				        }
 	                };
-					env.logger = sandbox.require('../../lib/log.js', {
+					env.logger = sandbox.require('../../src/lib/log.js', {
 			        	requires : {
 							'config': env.config,
                             'colors': env.colors,
@@ -328,7 +328,7 @@ describe('log service', () => {
 	                        json: true
 				        }
 	                };
-					env.logger = sandbox.require('../../lib/log.js', {
+					env.logger = sandbox.require('../../src/lib/log.js', {
 			        	requires : {
 							'config': env.config,
                             'colors': env.colors,

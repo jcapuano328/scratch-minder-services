@@ -1,0 +1,11 @@
+{
+    "transactionid": string,
+    "userid": string,
+    "accountid": string,
+    "type": "credit|debit|set",
+    "number": string,
+    "category": string,
+    "description": string,
+    "amount": number,
+    "when": datetime
+}

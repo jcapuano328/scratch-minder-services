@@ -62,12 +62,12 @@ describe('Router', () => {
 		env.modules = {
 			'config': env.config,
 			'file': env.file,
-			'./log': env.log
+			'../lib/log': env.log
 		};
 		env.modules[env.routes.file1.path] = env.routes.file1.routes;
 		env.modules[env.routes.file2.path] = env.routes.file2.routes;
 
-		env.router = sandbox.require('../../lib/router', {
+		env.router = sandbox.require('../../src/server/router', {
 			requires: env.modules
 		});
 	});

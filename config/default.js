@@ -1,7 +1,7 @@
 module.exports = {
     port: 3000,
     paths: {
-        routes: './routes'
+        routes: './src/routes'
     },
     log: {
         server: { // server-side logging parameters

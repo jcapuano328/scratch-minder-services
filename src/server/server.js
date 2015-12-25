@@ -2,7 +2,7 @@
 var config = require('config'),
     restify = require('restify'),
     router = require('./router'),
-    log = require('./log');
+    log = require('../lib/log');
 
 var server;
 
@@ -36,7 +36,7 @@ module.exports = {
             if (!server) {
                 return reject(new Error('Server has not started!'));
             }
-            server.close(() => {            
+            server.close(() => {
                 log.info('Stopped Server');
                 resolve();
             });

@@ -1,3 +1,4 @@
+'use strict'
 /* Logger
 	API:
 		logger[level](<msg>[, company, product, user, platform])
@@ -45,7 +46,7 @@
 		  }
 		}
 */
-var config = require('config');
+var config = require('config'),
     cons = require('./console'),
     colors = require('colors'),
 	_ = require('lodash');

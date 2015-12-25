@@ -1,0 +1,20 @@
+{
+    "userid": string,
+    "email": string,
+    "fname": string,
+    "lname": string,
+    "accounts": [
+        {
+            "accountid": string,
+            "number": string,
+            "name": string,
+            "balance": number,
+            "lastActivity": {
+            }
+        }
+    ],
+    "credentials": {
+        "salt": string,
+        "hash": string
+    }
+}

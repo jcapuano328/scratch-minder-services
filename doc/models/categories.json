@@ -1,0 +1,5 @@
+{
+    "categoryid": string,
+    "code": string,
+    "description": string
+}
