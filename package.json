@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "node main.js",
-    "test": "node ./node_modules/mocha/bin/mocha ./tests",
+    "test": "node ./node_modules/mocha/bin/mocha ./tests/unit",
     "debug": "node-debug main.js",
     "debug-test": "node-debug node_modules/mocha/bin/_mocha tests/unit/server-spec.js"
   },
@@ -26,14 +26,18 @@
   "dependencies": {
     "colors": "^1.1.2",
     "config": "^1.17.1",
+    "easy-pbkdf2": "^0.1.1",
     "file": "^0.2.2",
     "kerberos": "0.0.17",
     "lodash": "^3.10.1",
     "mongodb": "^2.0.52",
+    "node-uuid": "^1.4.7",
+    "oauth2-server-restify": "git+ssh://git@github.com:jcapuano328/node-oauth2-server-restify.git",
     "restify": "^4.0.3"
   },
   "devDependencies": {
     "chai": "^3.4.1",
+    "commander": "^2.9.0",
     "mocha": "^2.3.4",
     "sandboxed-module": "^2.0.3",
     "sinon": "^1.17.2",

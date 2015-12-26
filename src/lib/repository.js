@@ -30,7 +30,7 @@ module.exports = (collectionname, databasename) => {
             options = options || {};
             return this.connect()
             .then((db) => {
-                log.trace('Select ' + JSON.stringify(query));
+                log.trace('Select ' + JSON.stringify(query) + ' from ' + collectionname);
                 var collection = db.collection(collectionname);
                 return new Promise((resolve,reject) => {
                     collection.find(query, options, (err, cursor) => {

@@ -1,4 +1,9 @@
 'use strict'
+var config = require('config'),
+    cons = require('./console'),
+    colors = require('colors'),
+	_ = require('lodash');
+
 /* Logger
 	API:
 		logger[level](<msg>[, company, product, user, platform])
@@ -46,10 +51,6 @@
 		  }
 		}
 */
-var config = require('config'),
-    cons = require('./console'),
-    colors = require('colors'),
-	_ = require('lodash');
 
 colors.setTheme({
 	trace: 'green',

@@ -1,5 +1,6 @@
 'use strict'
 var config = require('config'),
+    path = require('path'),
     file = require('file'),
     log = require('../lib/log');
 
@@ -18,14 +19,19 @@ function findFiles(folder) {
 }
 
 function registerRoutes(file, server) {
-    var routes = require(file) || [];
+    log.trace('Loading routes from ' + file);
+    let routes = require(path.resolve(file)) || [];
+    if (typeof routes === 'function') {
+        routes = routes(server);
+    }
     routes.forEach((route) => {
         log.debug('Register route ' + JSON.stringify(route));
         if (route.method == 'delete') { route.method = 'del'; }
         if (methods.indexOf(route.method) < 0) {
             throw new Exception(route.method + ' is not a valid HTTP method');
         }
-        server[route.method](route.url, route.handler);
+        let auth = route.protected && server.oauth ? server.oauth.authorise() : (req,res,next) => {return next();};
+        server[route.method](route.uri, auth, route.handler);
     });
 }
 

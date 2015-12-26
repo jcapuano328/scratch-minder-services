@@ -1,0 +1,38 @@
+[
+    {
+        "email": "jdoe@mail.net",
+        "firstname": "John",
+        "lastname": "Doe",
+        "username": "jdoe",
+        "password": {
+            "salt": "200.6k8EABPyHKERXyObyvIgLEAC66vftmkWJxvrOa5/65U=",
+            "hash": "hIvJvB9HO6AcGNtOKmQJGrylNBJwlWalAld24Qfk4v/PltxLQv9iqYJHUBfg0uY8O5TEzGaXDKNBqZzlzqF4EnF1NexpnW5tx6A96AcB/5DySwBbpVcR6eXn0GPhAP5IR9wkgABWUCLjnVhSqn4GgmR1M/paB1sfST4sPaFp7T/bQeEyo0QRPdJjz9psfa09QzMYxMXBXvQZpTI8SUMx/3dfnVonaqSRnC94h4p6ULSn5vytFg7CCrxRRSmW4RpLUfWiup+XEwyzFrST1JmidJWYC9XhD+YV8gG3tn5jxGen2pM4M5asnudLA6uYmDoiL0ZlpvZIgkZ2uCO4vpj/+Q=="
+        },
+        "userid": "dd90e400-abec-11e5-9ecd-d98e8e26428e",
+        "status": "active"
+    },
+    {
+        "email": "fsmith@mail.net",
+        "firstname": "Frank",
+        "lastname": "Smith",
+        "username": "fsmith",
+        "password": {
+            "salt": "200.jw5gJZEB1kafkuSV+2u73QEPPInQcOMshkijvebcYog=",
+            "hash": "VaKLA83L9uGi0N7DxG4AOfOjghJ3gcFQ76vtOQxhmzVj9kcV9FuaApqDnon94K7lEpqbFXeW5dF98DZnvZ6sm0/0VbxztBEZu8CIvUseC8KXZBYtGLDezLcBljz2dEIt7fX56/QMNGTxxo7KSm1fr1wQnV3e24qJXEdbJeKErrBEBWJ2IxHPEt5/0gV4PMZ6QUf4KBF+L/N/8J+G9DSE7r0rfl6MP/odq/OCoQFanG4X9+ucTYgV68VYdDr/bZuLz9J9H+6ZkWs4QMZ1Sz4ImLNuf6smgzEcorNfCYV3Xtp4W4KHgjkLmbT7fuCzHijsPqL4Q81C/OeuxEZryWAaJA=="
+        },
+        "userid": "ebda1e00-abec-11e5-ab69-0df5c12f961a",
+        "status": "active"
+    },
+    {
+        "email": "mbailey@mail.net",
+        "firstname": "Mary",
+        "lastname": "Bailey",
+        "username": "mbailey",
+        "password": {
+            "salt": "200.xa/Qkz8WHTYVbuumEUB0zeTaUpq8q12opd1f04m+JFI=",
+            "hash": "OtKiqgHhKiE79Zxa3Gsc+PaGgN4lE2lMZcstXlwM3SPucfjcaB3RqeTtzZiheVmFdoIWoBIpKwKygWMOje75aY6QcAO/Bb5qaR79g0hNlgAZ1HBUKL+W5BkPiuyrBdYCHT0kRbe2gpAGgt3soBE2MIrrkGrQoAbySqxguIjlEzCFbdDZSCSCh97iYhLaQ8VlfC/VBcGuRxkwx6QKptNoAJAwfaRGKAwyWjAy45rZUBN3kv4HCLjwcUvShxGMpMH4fUprdAYy+jDQb3WS2OiT2gOunpBiJvZJ/TCDnNsbdElWz+hUinfl75SSrtw3Tj4yFLHEkEqA8Lolx74cuisA3w=="
+        },
+        "userid": "0d9efbf0-abed-11e5-b282-9bee4b8c11d2",
+        "status": "active"
+    }
+]

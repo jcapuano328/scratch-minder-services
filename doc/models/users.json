@@ -1,20 +1,11 @@
 {
     "userid": string,
     "email": string,
-    "fname": string,
-    "lname": string,
-    "accounts": [
-        {
-            "accountid": string,
-            "number": string,
-            "name": string,
-            "sequence": string,
-            "balance": number,
-            "lastActivity": {
-            }
-        }
-    ],
-    "credentials": {
+    "firstname": string,
+    "lastname": string,
+    "username": string,
+    "status": "active|locked",
+    "password": {
         "salt": string,
         "hash": string
     }

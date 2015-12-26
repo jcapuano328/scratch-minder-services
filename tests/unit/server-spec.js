@@ -28,6 +28,10 @@ describe('Server', () => {
 	        bodyParser: sinon.stub().returns('bodyparser'),
 	        gzipResponse: sinon.stub().returns('gzipresponse')
 		};
+		env.oauth = {
+			authorise: sinon.stub()
+		};
+		env.oauthserver = sinon.stub().returns(env.oauth);
         env.router = {
             register: sinon.stub()
         };
@@ -36,8 +40,10 @@ describe('Server', () => {
 			requires: {
                 'config': env.config,
                 'restify': env.restify,
+				'oauth2-server-restify': env.oauthserver,
                 './router': env.router,
-                '../lib/log': env.log
+                '../lib/log': env.log,
+				'../oauth/model': {}
             }
 		});
     });
@@ -69,6 +75,20 @@ describe('Server', () => {
                 expect(env.restify.gzipResponse).to.have.been.calledOnce;
                 expect(env.restifyServer.use).to.have.been.calledWith('gzipresponse');
             });
+			it('should register the oauth server', () => {
+				expect(env.oauthserver).to.have.been.calledOnce;
+				expect(env.oauthserver).to.have.been.calledWith({
+					model: /*sandbox.require('../../src/oauth/model', {
+						requires: {
+							'easy-pbkdf2': sinon.stub(),
+							'../lib/repository': sinon.stub(),
+							'../lib/log': env.log
+						}
+					})*/sinon.match.any,
+					grants: ['password', 'refresh_token'],
+					debug: sinon.match.any
+				});
+			});
             it('should register the routes', () => {
                 expect(env.router.register).to.have.been.calledOnce;
             });

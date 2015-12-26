@@ -1,0 +1,11 @@
+scratchminder: {
+    users,
+    clients,
+    tokens
+}
+
+<user>: {
+    categories,
+    accounts,
+    transactions
+}

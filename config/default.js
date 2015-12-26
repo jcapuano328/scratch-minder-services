@@ -1,7 +1,24 @@
 module.exports = {
     port: 3000,
     paths: {
-        routes: './src/routes'
+        routes: './src/routes/'
+    },
+    db: {
+        server: 'localhost',
+        port: 27017,
+        name: 'scratchminder',
+        options: {
+            server: {
+                maxPoolSize: 10
+            },
+            db: {
+                journal: true,
+                safe: true
+            }
+        }
+    },
+    auth: {
+        database: 'scratchminder'
     },
     log: {
         server: { // server-side logging parameters

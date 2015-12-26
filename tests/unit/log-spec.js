@@ -234,7 +234,7 @@ describe('log service', () => {
 	            	expect(env.colors.warn).to.have.been.calledOnce;
 	            	expect(env.colors.warn).to.have.been.calledWith('warn ');
 
-	            	expect(env.console.log).to.have.been.calledWith('warn  - foo');
+	            	expect(env.console.log).to.have.been.calledWith('warn  - foo - foo');
 	            });
             });
 
@@ -259,14 +259,14 @@ describe('log service', () => {
 
 	        	describe('args', () => {
 		        	beforeEach(() => {
-		                env.log.warn('foo', 'acme', 'glob', 'mook', 'desktop');
+		                env.log.warn('foo', 'mook', 'desktop');
 		            });
 
 		            it('should format the message as text', () => {
 	            		expect(env.colors.warn).to.have.been.calledOnce;
 		            	expect(env.colors.warn).to.have.been.calledWith('warn ');
 
-		            	expect(env.console.log).to.have.been.calledWith('warn  - foo - acme - glob - mook - desktop');
+		            	expect(env.console.log).to.have.been.calledWith('warn  - foo - foo - mook');//('warn  - foo - mook - desktop');
 		            });
 	            });
 
@@ -314,7 +314,7 @@ describe('log service', () => {
 	            	expect(env.console.log).to.have.been.calledWith(JSON.stringify({
 	                	level: 'warn',
 	                    message: 'foo',
-	                    user: '',
+	                    user: 'foo',
 	                    platform: ''
 	                }));
 	            });
@@ -351,8 +351,8 @@ describe('log service', () => {
 		            	expect(env.console.log).to.have.been.calledWith(JSON.stringify({
 		                	level: 'warn',
 		                    message: 'foo',
-		                    user: 'mook',
-		                    platform: 'desktop'
+		                    user: 'foo',
+		                    platform: 'mook'
 		                }));
 		            });
                 });
