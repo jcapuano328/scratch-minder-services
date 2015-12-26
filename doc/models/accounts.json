@@ -1,5 +1,4 @@
-{
-    "userid": string,
+{    
     "accountid": string,
     "number": string,
     "name": string,
@@ -12,6 +11,6 @@
         "category": string,
         "description": string,
         "amount": number,
-        "when": datetime        
+        "when": datetime
     }
 }

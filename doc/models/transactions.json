@@ -1,6 +1,5 @@
 {
-    "transactionid": string,
-    "userid": string,
+    "transactionid": string,    
     "accountid": string,
     "type": "credit|debit|set",
     "sequence": string,

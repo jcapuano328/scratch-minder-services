@@ -6,13 +6,13 @@ var config = require('config'),
 
 /* Logger
 	API:
-		logger[level](<msg>[, company, product, user, platform])
+		logger[level](<msg>[, user, platform])
 
         	level is a configured level: trace, debug, etc.
             msg is required (the message)
             company, product, etc are optional
 
-		logger[level](<msg>[, {company: '', product: '', user: '', platform: ''}])
+		logger[level](<msg>[, {user: '', platform: ''}])
 
         	level is a configured level: trace, debug, etc.
             msg is required (the message)
@@ -25,7 +25,7 @@ var config = require('config'),
 		      expressFormat: ':remote-addr - - [:date] ":method :url HTTP/:http-version" (:status) :res[content-length] ":referrer" ":user-agent"',
 		      transports: { // logging transports
 		      	console: {
-                  format: ['date', 'level', 'message', 'company', 'product', 'user', 'platform', 'locale', 'stack'],
+                  format: ['date', 'level', 'message', 'user', 'platform', 'locale', 'stack'],
 		          level: 'info', // maximum level of logged messages
 		          enabled: false, // this switch can be used to easily toggle use of a given transport
 		          colorize: true, // this switch can be used to easily toggle use of colors
@@ -62,7 +62,7 @@ colors.setTheme({
 });
 
 var defaultExpressFormat = ':remote-addr - - [:date] ":method :url HTTP/:http-version" (:status) :res[content-length] ":referrer" ":user-agent"';
-var defaultFormat = ['date', 'level', 'message', 'company', 'product', 'user', 'platform', 'locale', 'stack'];
+var defaultFormat = ['date', 'level', 'message', 'user', 'platform', 'locale', 'stack'];
 var defaultLevels = {
 	trace: 0,
     debug: 1,
