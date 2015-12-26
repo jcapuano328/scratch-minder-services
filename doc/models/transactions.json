@@ -3,7 +3,7 @@
     "userid": string,
     "accountid": string,
     "type": "credit|debit|set",
-    "number": string,
+    "sequence": string,
     "category": string,
     "description": string,
     "amount": number,

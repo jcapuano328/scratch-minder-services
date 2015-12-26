@@ -8,6 +8,7 @@
             "accountid": string,
             "number": string,
             "name": string,
+            "sequence": string,
             "balance": number,
             "lastActivity": {
             }
