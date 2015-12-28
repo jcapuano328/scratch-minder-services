@@ -31,8 +31,7 @@
     "kerberos": "0.0.17",
     "lodash": "^3.10.1",
     "mongodb": "^2.0.52",
-    "node-uuid": "^1.4.7",
-    "oauth2-server-restify": "git+ssh://git@github.com:jcapuano328/node-oauth2-server-restify.git",
+    "node-uuid": "^1.4.7",    
     "restify": "^4.0.3"
   },
   "devDependencies": {

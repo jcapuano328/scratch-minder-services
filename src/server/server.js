@@ -1,7 +1,6 @@
 'use strict'
 var config = require('config'),
     restify = require('restify'),
-    oauthserver = require('oauth2-server-restify'),
     router = require('./router'),
     log = require('../lib/log');
 
@@ -13,13 +12,9 @@ module.exports = {
         return new Promise((resolve, reject) => {
             server = restify.createServer();
             server.use(restify.gzipResponse());
+            server.use(restify.authorizationParser());
             server.use(restify.queryParser());
-            server.use(restify.bodyParser({mapParams: false}));
-            server.oauth = oauthserver({
-              model: require('../oauth/model'),
-              grants: ['password', 'refresh_token'],
-              debug: log.error
-            });
+            server.use(restify.bodyParser({mapParams: false}));            
             log.trace('load routes');
             router.register(server)
             .then(() => {

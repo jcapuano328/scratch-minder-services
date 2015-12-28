@@ -24,14 +24,11 @@ describe('Server', () => {
 		};
 		env.restify = {
 			createServer: sinon.stub().returns(env.restifyServer),
+			authorizationParser: sinon.stub().returns('authorizationparser'),
 	        queryParser: sinon.stub().returns('queryparser'),
 	        bodyParser: sinon.stub().returns('bodyparser'),
 	        gzipResponse: sinon.stub().returns('gzipresponse')
 		};
-		env.oauth = {
-			authorise: sinon.stub()
-		};
-		env.oauthserver = sinon.stub().returns(env.oauth);
         env.router = {
             register: sinon.stub()
         };
@@ -40,10 +37,8 @@ describe('Server', () => {
 			requires: {
                 'config': env.config,
                 'restify': env.restify,
-				'oauth2-server-restify': env.oauthserver,
                 './router': env.router,
-                '../lib/log': env.log,
-				'../oauth/model': {}
+                '../lib/log': env.log
             }
 		});
     });
@@ -63,6 +58,10 @@ describe('Server', () => {
             it('should create the restify server', () => {
                 expect(env.restify.createServer).to.have.been.calledOnce;
             });
+			it('should use the authorization parser', () => {
+                expect(env.restify.authorizationParser).to.have.been.calledOnce;
+                expect(env.restifyServer.use).to.have.been.calledWith('authorizationparser');
+            });
             it('should use the query parser', () => {
                 expect(env.restify.queryParser).to.have.been.calledOnce;
                 expect(env.restifyServer.use).to.have.been.calledWith('queryparser');
@@ -75,20 +74,6 @@ describe('Server', () => {
                 expect(env.restify.gzipResponse).to.have.been.calledOnce;
                 expect(env.restifyServer.use).to.have.been.calledWith('gzipresponse');
             });
-			it('should register the oauth server', () => {
-				expect(env.oauthserver).to.have.been.calledOnce;
-				expect(env.oauthserver).to.have.been.calledWith({
-					model: /*sandbox.require('../../src/oauth/model', {
-						requires: {
-							'easy-pbkdf2': sinon.stub(),
-							'../lib/repository': sinon.stub(),
-							'../lib/log': env.log
-						}
-					})*/sinon.match.any,
-					grants: ['password', 'refresh_token'],
-					debug: sinon.match.any
-				});
-			});
             it('should register the routes', () => {
                 expect(env.router.register).to.have.been.calledOnce;
             });

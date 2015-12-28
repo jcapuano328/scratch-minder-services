@@ -2,6 +2,7 @@
 var config = require('config'),
     path = require('path'),
     file = require('file'),
+    oauth = require('../services/oauth2'),
     log = require('../lib/log');
 
 var methods = ['post', 'get', 'put', 'del'];
@@ -30,27 +31,25 @@ function registerRoutes(file, server) {
         if (methods.indexOf(route.method) < 0) {
             throw new Exception(route.method + ' is not a valid HTTP method');
         }
-        let auth = route.protected && server.oauth ? server.oauth.authorise() : (req,res,next) => {return next();};
+        let auth = route.protected ? oauth.authorise() : (req,res,next) => {return next();};
         server[route.method](route.uri, auth, route.handler);
     });
 }
 
-function register(server) {
-    log.debug('Register routes');
-    return new Promise((resolve, reject) => {
-        findFiles(config.paths.routes)
-        .then((files) => {
-            files.forEach((file) => {
-                registerRoutes(file, server);
-            });
-            resolve();
-        })
-        .catch((err) => {
-            reject(err);
-        });
-    });
-}
-
 module.exports = {
-    register: register
+    register(server) {
+        log.debug('Register routes');
+        return new Promise((resolve, reject) => {
+            findFiles(config.paths.routes)
+            .then((files) => {
+                files.forEach((file) => {
+                    registerRoutes(file, server);
+                });
+                resolve();
+            })
+            .catch((err) => {
+                reject(err);
+            });
+        });
+    }
 };

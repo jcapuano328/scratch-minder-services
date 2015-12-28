@@ -3,12 +3,6 @@ var program = require('commander');
 var uuid = require('node-uuid');
 var easyPbkdf2 = require("easy-pbkdf2")();
 
-function collect(val, memo) {
-    memo.push(val);
-    return memo;
-}
-
-
 function main(args) {
 	try {
 		var opts = {

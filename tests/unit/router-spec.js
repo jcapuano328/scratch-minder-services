@@ -26,6 +26,10 @@ describe('Router', () => {
 			put: sinon.stub(),
 			del: sinon.stub()
 		};
+		env.oauth = {
+			authorise: sinon.stub().returns(() => {})
+		};
+
 		env.routes = {
 			file1: {
 				path: path.join(env.config.paths.routes, 'file1.js'),
@@ -66,6 +70,7 @@ describe('Router', () => {
 		env.modules = {
 			'config': env.config,
 			'file': env.file,
+			'../services/oauth2': env.oauth,
 			'../lib/log': env.log
 		};
 		env.modules[env.routes.file1.path] = env.routes.file1.routes;
@@ -101,6 +106,7 @@ describe('Router', () => {
 				env.modules = {
 					'config': env.config,
 					'file': env.file,
+					'../services/oauth2': env.oauth,
 					'../lib/log': env.log
 				};
 				env.modules[env.routes.file1.path] = env.routes.file1.routes;
@@ -130,10 +136,6 @@ describe('Router', () => {
 		describe('authenticated', () => {
 			beforeEach((done) => {
 				env.file.walk.yields(null, null, null, [env.routes.file1.path, env.routes.file2.path]);
-				env.oauth = {
-					authorise: sinon.stub()
-				};
-				env.server.oauth = env.oauth;
 
 				env.router.register(env.server)
 				.then(() => { done(); })
