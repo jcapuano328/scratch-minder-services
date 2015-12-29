@@ -10,19 +10,13 @@ describe('Login Route', () => {
 	beforeEach(() => {
 		env = {};
         env.log = sandbox.require('../mocks/log')();
-        env.crypto = {
-            verify: sinon.stub()
-        };
-        env.users = {
-            select: sinon.stub()
+        env.login = {
+            login: sinon.stub()
         };
         env.user = {
             username: 'foo',
-            status: 'active',
-            password: {
-                salt: '123',
-                hash: 'abc'
-            }
+			firstname: 'fname',
+			lastname: 'lname'
         };
         env.req = {
             body: {
@@ -37,8 +31,7 @@ describe('Login Route', () => {
 
         env.routes = sandbox.require('../../src/routes/login', {
             requires: {
-                'easy-pbkdf2': sinon.stub().returns(env.crypto),
-                '../lib/repository': sinon.stub().returns(env.users),
+                '../services/login': env.login,
                 '../lib/log': env.log
             }
         });
@@ -64,112 +57,38 @@ describe('Login Route', () => {
     });
     describe('handler', () => {
         beforeEach(() => {
-            env.login = env.routes[0].handler;
+            env.handler = env.routes[0].handler;
         });
         describe('success', () => {
             beforeEach((done) => {
-                env.users.select.returns(Promise.accept([env.user]));
-                env.crypto.verify.yields(null, true);
-
-                env.login(env.req,env.res,env.next)
+                env.login.login.returns(Promise.accept(env.user));
+                env.handler(env.req,env.res,env.next)
                 .then(() => {done();})
                 .catch(done);
             });
-            it('should fetch the user', () => {
-                expect(env.users.select).to.have.been.calledOnce;
-                expect(env.users.select).to.have.been.calledWith(sinon.match({username: env.user.username}));
-            });
-            it('should verify the password', () => {
-                expect(env.crypto.verify).to.have.been.calledOnce;
-                expect(env.crypto.verify).to.have.been.calledWith(env.user.password.salt, env.user.password.hash, env.req.body.password, sinon.match.func);
+            it('should invoke the service', () => {
+                expect(env.login.login).to.have.been.calledOnce;
+                expect(env.login.login).to.have.been.calledWith(env.user.username, 'go');
             });
             it('should return a 200 to the caller', () => {
                 expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(200);
+                expect(env.res.send).to.have.been.calledWith(200, sinon.match(env.user));
             });
         });
-        describe('invalid user', () => {
-            beforeEach((done) => {
-                env.users.select.returns(Promise.accept([]));
-
-                env.login(env.req,env.res,env.next)
+        describe('failure', () => {
+			beforeEach((done) => {
+                env.login.login.returns(Promise.reject({type: 'process', message: 'bad things'}));
+                env.handler(env.req,env.res,env.next)
                 .then(() => {done();})
                 .catch(done);
             });
-            it('should fetch the user', () => {
-                expect(env.users.select).to.have.been.calledOnce;
-                expect(env.users.select).to.have.been.calledWith(sinon.match({username: env.user.username}));
-            });
-            it('should not verify the password', () => {
-                expect(env.crypto.verify).to.not.have.been.called;
+            it('should invoke the service', () => {
+                expect(env.login.login).to.have.been.calledOnce;
+                expect(env.login.login).to.have.been.calledWith(env.user.username, 'go');
             });
             it('should return a 401 to the caller', () => {
                 expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(401, sinon.match({"message": 'User not found'}));
-            });
-        });
-        describe('user account locked', () => {
-            beforeEach((done) => {
-                env.user.status = 'locked';
-                env.users.select.returns(Promise.accept([env.user]));
-
-                env.login(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
-            });
-            it('should fetch the user', () => {
-                expect(env.users.select).to.have.been.calledOnce;
-                expect(env.users.select).to.have.been.calledWith(sinon.match({username: env.user.username}));
-            });
-            it('should not verify the password', () => {
-                expect(env.crypto.verify).to.not.have.been.called;
-            });
-            it('should return a 401 to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(401, sinon.match({"message": 'Account is locked'}));
-            });
-        });
-        describe('user account inactive', () => {
-            beforeEach((done) => {
-                env.user.status = 'inactive';
-                env.users.select.returns(Promise.accept([env.user]));
-
-                env.login(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
-            });
-            it('should fetch the user', () => {
-                expect(env.users.select).to.have.been.calledOnce;
-                expect(env.users.select).to.have.been.calledWith(sinon.match({username: env.user.username}));
-            });
-            it('should not verify the password', () => {
-                expect(env.crypto.verify).to.not.have.been.called;
-            });
-            it('should return a 401 to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(401, sinon.match({"message": 'Account is inactive'}));
-            });
-        });
-        describe('invalid password', () => {
-            beforeEach((done) => {
-                env.users.select.returns(Promise.accept([env.user]));
-                env.crypto.verify.yields(null, false);
-
-                env.login(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
-            });
-            it('should fetch the user', () => {
-                expect(env.users.select).to.have.been.calledOnce;
-                expect(env.users.select).to.have.been.calledWith(sinon.match({username: env.user.username}));
-            });
-            it('should verify the password', () => {
-                expect(env.crypto.verify).to.have.been.calledOnce;
-                expect(env.crypto.verify).to.have.been.calledWith(env.user.password.salt, env.user.password.hash, env.req.body.password, sinon.match.func);
-            });
-            it('should return a 401 to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(401, sinon.match({"message": 'Invalid Username/Password'}));
+                expect(env.res.send).to.have.been.calledWith(401, sinon.match({type: 'process', message: 'bad things'}));
             });
         });
     });
