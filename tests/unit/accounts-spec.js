@@ -1,4 +1,3 @@
-/*
 'use strict';
 var chai = require('chai'),
 	expect = chai.expect,
@@ -233,7 +232,7 @@ describe('Accounts Service', () => {
 
     describe('read', () => {
         beforeEach(() => {
-            env.handler = env.service[1].handler;
+            env.handler = env.service.read;
         });
 
         describe('success', () => {
@@ -243,9 +242,12 @@ describe('Accounts Service', () => {
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
                 env.repo.select.onSecondCall().returns(Promise.accept([env.dbaccount]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+                env.handler(env.params)
+				.then((result) => {
+					env.result = result;
+					done();
+				})
+				.catch(done);
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledTwice;
@@ -265,27 +267,26 @@ describe('Accounts Service', () => {
             it('should select the account', () => {
                 expect(env.repo.select).to.have.been.calledWith({accountid: 'account123'});
             });
-            it('should return account to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(200, sinon.match(env.dbaccount));
+            it('should return account', () => {
+                expect(env.result).to.exist;
             });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'User id missing');
+					done();
+				});
             });
             it('should not create respositories', () => {
                 expect(env.respository).to.not.have.been.called;
             });
             it('should not select data', () => {
                 expect(env.repo.select).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'User id missing'}));
             });
         });
 
@@ -293,19 +294,19 @@ describe('Accounts Service', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
 
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'Account id missing');
+					done();
+				});
             });
             it('should not create respositories', () => {
                 expect(env.respository).to.not.have.been.called;
             });
             it('should not select data', () => {
                 expect(env.repo.select).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'Account id missing'}));
             });
         });
 
@@ -315,9 +316,13 @@ describe('Accounts Service', () => {
                 env.params.id = 'account123';
                 env.repo.select.onFirstCall().returns(Promise.accept([]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'User not found');
+					done();
+				});
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledOnce;
@@ -337,10 +342,6 @@ describe('Accounts Service', () => {
             it('should not select the account', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({accountid: 'account123'});
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(500, sinon.match({"message": 'User not found'}));
-            });
         });
 
         describe('account not found', () => {
@@ -350,9 +351,13 @@ describe('Accounts Service', () => {
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
                 env.repo.select.onSecondCall().returns(Promise.accept([]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'Account not found');
+					done();
+				});
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledTwice;
@@ -372,16 +377,12 @@ describe('Accounts Service', () => {
             it('should select the account', () => {
                 expect(env.repo.select).to.have.been.calledWith({accountid: 'account123'});
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(500, sinon.match({"message": 'Account not found'}));
-            });
         });
     });
 
     describe('read all', () => {
         beforeEach(() => {
-            env.handler = env.service[2].handler;
+            env.handler = env.service.readAll;
         });
 
         describe('success', () => {
@@ -390,9 +391,12 @@ describe('Accounts Service', () => {
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
                 env.repo.select.onSecondCall().returns(Promise.accept([env.dbaccount, env.dbaccount]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params)
+				.then((result) => {
+					env.result = result;
+					done();
+				})
+				.catch(done);
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledTwice;
@@ -412,27 +416,28 @@ describe('Accounts Service', () => {
             it('should select the account', () => {
                 expect(env.repo.select).to.have.been.calledWith({});
             });
-            it('should return accounts to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(200, sinon.match([env.dbaccount,env.dbaccount]));
+            it('should return accounts', () => {
+                expect(env.result).to.exist;
+				expect(env.result).to.be.an.array;
+				expect(env.result).to.have.length(2);
             });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'User id missing');
+					done();
+				});
             });
             it('should not create respositories', () => {
                 expect(env.respository).to.not.have.been.called;
             });
             it('should not select data', () => {
                 expect(env.repo.select).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'User id missing'}));
             });
         });
 
@@ -441,9 +446,13 @@ describe('Accounts Service', () => {
                 env.params.userid = 'user123';
                 env.repo.select.onFirstCall().returns(Promise.accept([]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'User not found');
+					done();
+				});
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledOnce;
@@ -463,26 +472,26 @@ describe('Accounts Service', () => {
             it('should not select the account', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({});
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(500, sinon.match({"message": 'User not found'}));
-            });
         });
     });
 
     describe('update', () => {
         beforeEach(() => {
-            env.handler = env.service[3].handler;
+            env.handler = env.service.update;
         });
+
         describe('success', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.req.body = env.account;
+				env.params.id = 'account123';
                 env.repo.select.returns(Promise.accept([env.user]));
                 env.repo.save.returns(Promise.accept(env.dbaccount));
 
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
+                env.handler(env.params,env.account)
+                .then((result) => {
+					env.result = result;
+					done();
+				})
                 .catch(done);
             });
             it('should create the respositories', () => {
@@ -503,19 +512,20 @@ describe('Accounts Service', () => {
                 expect(env.repo.save).to.have.been.calledOnce;
                 expect(env.repo.save).to.have.been.calledWith(env.account);
             });
-            it('should return created to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(201, sinon.match(env.dbaccount));
+            it('should return the account', () => {
+                expect(env.result).to.exist;
             });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-                env.req.body = env.account;
-
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+                env.handler(env.params,env.account)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'User id missing');
+					done();
+				});
             });
             it('should not create the respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -525,21 +535,20 @@ describe('Accounts Service', () => {
             });
             it('should not save the data', () => {
                 expect(env.repo.save).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'User id missing'}));
             });
         });
 
         describe('account missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.req.body = null;
 
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'Account missing');
+					done();
+				});
             });
             it('should not create the respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -549,10 +558,6 @@ describe('Accounts Service', () => {
             });
             it('should not save the data', () => {
                 expect(env.repo.save).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'Account missing'}));
             });
         });
 
@@ -560,11 +565,14 @@ describe('Accounts Service', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
                 env.account.number = null;
-                env.req.body = env.account;
 
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params,env.account)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'Account number invalid');
+					done();
+				});
             });
             it('should not create the respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -574,10 +582,6 @@ describe('Accounts Service', () => {
             });
             it('should not save the data', () => {
                 expect(env.repo.save).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'Account number invalid'}));
             });
         });
 
@@ -585,11 +589,14 @@ describe('Accounts Service', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
                 env.account.name = '';
-                env.req.body = env.account;
 
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params,env.account)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'Account name invalid');
+					done();
+				});
             });
             it('should not create the respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -600,21 +607,20 @@ describe('Accounts Service', () => {
             it('should not save the data', () => {
                 expect(env.repo.save).to.not.have.been.called;
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'Account name invalid'}));
-            });
         });
 
         describe('user not found', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.req.body = env.account;
                 env.repo.select.returns(Promise.accept([]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params,env.account)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'User not found');
+					done();
+				});
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledOnce;
@@ -634,16 +640,15 @@ describe('Accounts Service', () => {
             it('should not select the account', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({accountid: 'account123'});
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(500, sinon.match({"message": 'User not found'}));
+			it('should not save the data', () => {
+                expect(env.repo.save).to.not.have.been.called;
             });
         });
     });
 
-    describe('delete', () => {
+    describe('remove', () => {
         beforeEach(() => {
-            env.handler = env.service[4].handler;
+            env.handler = env.service.remove;
         });
 
         describe('success', () => {
@@ -653,7 +658,7 @@ describe('Accounts Service', () => {
                 env.repo.select.returns(Promise.accept([env.user]));
                 env.repo.remove.returns(Promise.accept(true));
 
-                env.handler(env.req,env.res,env.next)
+                env.handler(env.params)
                 .then(done)
                 .catch(done);
             });
@@ -673,17 +678,17 @@ describe('Accounts Service', () => {
             it('should remove the account', () => {
                 expect(env.repo.remove).to.have.been.calledWith({accountid: 'account123'});
             });
-            it('should return result to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(200, sinon.match({accountid: 'account123'}));
-            });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'User id missing');
+					done();
+				});
             });
             it('should not create respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -693,10 +698,6 @@ describe('Accounts Service', () => {
             });
             it('should not delete account', () => {
                 expect(env.repo.remove).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'User id missing'}));
             });
         });
 
@@ -704,9 +705,13 @@ describe('Accounts Service', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
 
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'Account id missing');
+					done();
+				});
             });
             it('should not create respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -716,10 +721,6 @@ describe('Accounts Service', () => {
             });
             it('should not delete account', () => {
                 expect(env.repo.remove).to.not.have.been.called;
-            });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'Account id missing'}));
             });
         });
 
@@ -729,9 +730,13 @@ describe('Accounts Service', () => {
                 env.params.id = 'account123';
                 env.repo.select.returns(Promise.accept([]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'User not found');
+					done();
+				});
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledOnce;
@@ -749,16 +754,12 @@ describe('Accounts Service', () => {
             it('should not delete account', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(500, sinon.match({"message": 'User not found'}));
-            });
         });
     });
 
     describe('delete all', () => {
         beforeEach(() => {
-            env.handler = env.service[5].handler;
+            env.handler = env.service.removeAll;
         });
 
         describe('success', () => {
@@ -767,7 +768,7 @@ describe('Accounts Service', () => {
                 env.repo.select.returns(Promise.accept([env.user]));
                 env.repo.remove.returns(Promise.accept(true));
 
-                env.handler(env.req,env.res,env.next)
+                env.handler(env.params)
                 .then(done)
                 .catch(done);
             });
@@ -787,17 +788,17 @@ describe('Accounts Service', () => {
             it('should remove the accounts', () => {
                 expect(env.repo.remove).to.have.been.calledWith({});
             });
-            it('should return result to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(200);
-            });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-                env.handler(env.req,env.res,env.next)
-                .then(() => {done();})
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'User id missing');
+					done();
+				});
             });
             it('should not create respositories', () => {
                 expect(env.respository).to.not.have.been.called;
@@ -808,10 +809,6 @@ describe('Accounts Service', () => {
             it('should not delete account', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(400, sinon.match({"message": 'User id missing'}));
-            });
         });
 
         describe('user not found', () => {
@@ -819,9 +816,13 @@ describe('Accounts Service', () => {
                 env.params.userid = 'user123';
                 env.repo.select.returns(Promise.accept([]));
 
-                env.handler(env.req,env.res,env.next)
-                .then(done)
-                .catch(done);
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'User not found');
+					done();
+				});
             });
             it('should create the respositories', () => {
                 expect(env.respository).to.have.been.calledOnce;
@@ -839,11 +840,6 @@ describe('Accounts Service', () => {
             it('should not delete account', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
-            it('should return an error to the caller', () => {
-                expect(env.res.send).to.have.been.calledOnce;
-                expect(env.res.send).to.have.been.calledWith(500, sinon.match({"message": 'User not found'}));
-            });
         });
     });
 });
-*/

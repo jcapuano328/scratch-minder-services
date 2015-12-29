@@ -41,23 +41,23 @@ module.exports = {
                 return data;
             })
             .catch((err) => {
-                log.error({type: 'process', message: err.message});
+                log.error(err.message);
                 throw err;
             });
         })
         .catch((err) => {
-            log.error(err);
+            log.error(err.message);
             throw err;
         });
-    }/*,
+    },
     read(params) {
         log.info('Read account');
         return new Promise((resolve,reject) => {
             if (!params || !params.userid) {
-                return reject(new Error('User id missing'));
+                return reject({type: 'validation', message: 'User id missing'});
             }
             if (!params || !params.id) {
-                return reject(new Error('Account id missing'));
+                return reject({type: 'validation', message: 'Account id missing'});
             }
             resolve(true);
         })
@@ -68,7 +68,7 @@ module.exports = {
             return users.select({userid: params.userid})
             .then((data) => {
                 if (!data || data.length < 1) {
-                    throw new Error('User not found');
+                    throw {type: 'process', message: 'User not found'};
                 }
                 let user = data[0];
                 log.debug('user found: ' + user.username);
@@ -77,27 +77,27 @@ module.exports = {
             })
             .then((data) => {
                 if (!data || data.length < 1) {
-                    throw new Error('Account not found');
+                    throw {type: 'process', message: 'Account not found'};
                 }
                 let account = data[0];
                 log.debug('Account found: ' + account.name + '/' + account.number);
-                res.send(200, account);
+                return account;
             })
             .catch((err) => {
                 log.error(err);
-                res.send(500, err);
+                throw err;
             });
         })
         .catch((err) => {
             log.error(err);
-            res.send(400, err);
+            throw err;
         });
     },
-    readAll(params){
+    readAll(params) {
         log.info('Read accounts');
         return new Promise((resolve,reject) => {
             if (!params || !params.userid) {
-                return reject(new Error('User id missing'));
+                return reject({type: 'validation', message: 'User id missing'});
             }
             resolve(true);
         })
@@ -108,7 +108,7 @@ module.exports = {
             return users.select({userid: params.userid})
             .then((data) => {
                 if (!data || data.length < 1) {
-                    throw new Error('User not found');
+                    throw {type: 'process', message: 'User not found'};
                 }
                 let user = data[0];
                 log.debug('user found: ' + user.username);
@@ -118,35 +118,35 @@ module.exports = {
             .then((data) => {
                 data = data || [];
                 log.debug(data.length + ' Accounts found');
-                res.send(200, data);
+                return data;
             })
             .catch((err) => {
                 log.error(err);
-                res.send(500, err);
+                throw err;
             });
         })
         .catch((err) => {
             log.error(err);
-            res.send(400, err);
+            throw err;
         });
     },
     update(params, account) {
         log.info('Update account');
         return new Promise((resolve,reject) => {
             if (!params || !params.userid) {
-                return reject(new Error('User id missing'));
+                return reject({type: 'validation', message: 'User id missing'});
             }
             if (!account) {
-                return reject(new Error('Account missing'));
+                return reject({type: 'validation', message: 'Account missing'});
             }
             if (!account.accountid) {
-                return reject(new Error('Account id invalid'));
+                return reject({type: 'validation', message: 'Account id invalid'});
             }
             if (!account.number) {
-                return reject(new Error('Account number invalid'));
+                return reject({type: 'validation', message: 'Account number invalid'});
             }
             if (!account.name) {
-                return reject(new Error('Account name invalid'));
+                return reject({type: 'validation', message: 'Account name invalid'});
             }
             resolve(true);
         })
@@ -156,7 +156,7 @@ module.exports = {
             return users.select({userid: params.userid})
             .then((data) => {
                 if (!data || data.length < 1) {
-                    throw new Error('User not found');
+                    throw {type: 'process', message: 'User not found'};
                 }
                 let user = data[0];
                 log.debug('user found: ' + user.username);
@@ -165,26 +165,26 @@ module.exports = {
             })
             .then((data) => {
                 log.debug('Account created');
-                res.send(201, data);
+                return data;
             })
             .catch((err) => {
                 log.error(err);
-                res.send(500, err);
+                throw err;
             });
         })
         .catch((err) => {
             log.error(err);
-            res.send(400, err);
+            throw err;
         });
     },
-    remove(params) => {
+    remove(params) {
         log.info('Delete account');
         return new Promise((resolve,reject) => {
             if (!params || !params.userid) {
-                return reject(new Error('User id missing'));
+                return reject({type: 'validation', message: 'User id missing'});
             }
-            if (!params || !params.id) {
-                return reject(new Error('Account id missing'));
+            if (!params.id) {
+                return reject({type: 'validation', message: 'Account id missing'});
             }
             resolve(true);
         })
@@ -195,7 +195,7 @@ module.exports = {
             return users.select({userid: params.userid})
             .then((data) => {
                 if (!data || data.length < 1) {
-                    throw new Error('User not found');
+                    throw {type: 'process', message: 'User not found'};
                 }
                 let user = data[0];
                 log.debug('user found: ' + user.username);
@@ -204,23 +204,23 @@ module.exports = {
             })
             .then((data) => {
                 log.debug('Account removed');
-                res.send(200, {accountid: params.id});
+                //return data;
             })
             .catch((err) => {
                 log.error(err);
-                res.send(500, err);
+                throw err;
             });
         })
         .catch((err) => {
             log.error(err);
-            res.send(400, err);
+            throw err;
         });
     },
     removeAll(params) {
         log.info('Delete accounts');
         return new Promise((resolve,reject) => {
             if (!params || !params.userid) {
-                return reject(new Error('User id missing'));
+                return reject({type: 'validation', message: 'User id missing'});
             }
             resolve(true);
         })
@@ -231,7 +231,7 @@ module.exports = {
             return users.select({userid: params.userid})
             .then((data) => {
                 if (!data || data.length < 1) {
-                    throw new Error('User not found');
+                    throw {type: 'process', message: 'User not found'};
                 }
                 let user = data[0];
                 log.debug('user found: ' + user.username);
@@ -240,17 +240,16 @@ module.exports = {
             })
             .then((data) => {
                 log.debug('Accounts removed');
-                res.send(200);
+                //return data;
             })
             .catch((err) => {
                 log.error(err);
-                res.send(500, err);
+                throw err;
             });
         })
         .catch((err) => {
             log.error(err);
-            res.send(400, err);
+            throw err;
         });
     }
-    */
 };

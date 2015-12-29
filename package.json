@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node main.js",
     "test": "node ./node_modules/mocha/bin/mocha ./tests/unit",
+    "test-integration": "node ./node_modules/mocha/bin/mocha ./tests/integration",
     "debug": "node-debug main.js",
     "debug-test": "node-debug node_modules/mocha/bin/_mocha tests/unit/server-spec.js"
   },
@@ -31,7 +32,7 @@
     "kerberos": "0.0.17",
     "lodash": "^3.10.1",
     "mongodb": "^2.0.52",
-    "node-uuid": "^1.4.7",    
+    "node-uuid": "^1.4.7",
     "restify": "^4.0.3"
   },
   "devDependencies": {
