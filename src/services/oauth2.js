@@ -155,10 +155,10 @@ module.exports = {
                 if (!!token.expires && token.expires < new Date()) {
                     throw {type: 'process', message: 'Token expired'};
                 }
-                return token.userid;
+                return token.userId;
             });
         })
-        .then((userid) => {
+        .then((userid) => {            
             return getUser({userid: userid});
         })
         .then((user) => {
@@ -177,7 +177,7 @@ module.exports = {
 
     authorise() {
         return (req,res,next) => {
-            return oauth.authorize(req.authorization)
+            return this.authorize(req.authorization)
             .then((result) => {
                 if (result) {
                     return next();

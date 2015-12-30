@@ -450,7 +450,7 @@ describe('OAuth2 Service', () => {
                 expect(env.respository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
-                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userid});
+                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
             });
             it('should return the user', () => {
                 expect(env.result).to.exist;
@@ -559,7 +559,7 @@ describe('OAuth2 Service', () => {
                 expect(env.respository).to.not.have.been.calledWith('users');
             });
             it('should not fetch the user', () => {
-                expect(env.repo.select).to.not.have.been.calledWith({userid: env.token.userid});
+                expect(env.repo.select).to.not.have.been.calledWith({userid: env.token.userId});
             });
             it('should not return the user', () => {
                 expect(env.result).to.not.exist;
@@ -594,7 +594,7 @@ describe('OAuth2 Service', () => {
                 expect(env.respository).to.not.have.been.calledWith('users');
             });
             it('should not fetch the user', () => {
-                expect(env.repo.select).to.not.have.been.calledWith({userid: env.token.userid});
+                expect(env.repo.select).to.not.have.been.calledWith({userid: env.token.userId});
             });
             it('should not return the user', () => {
                 expect(env.result).to.not.exist;
@@ -630,7 +630,7 @@ describe('OAuth2 Service', () => {
                 expect(env.respository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
-                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userid});
+                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
             });
             it('should not return the user', () => {
                 expect(env.result).to.not.exist;
@@ -667,7 +667,7 @@ describe('OAuth2 Service', () => {
                 expect(env.respository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
-                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userid});
+                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
             });
             it('should not return the user', () => {
                 expect(env.result).to.not.exist;
@@ -704,7 +704,7 @@ describe('OAuth2 Service', () => {
                 expect(env.respository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
-                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userid});
+                expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
             });
             it('should not return the user', () => {
                 expect(env.result).to.not.exist;
