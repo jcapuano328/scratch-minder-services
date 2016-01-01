@@ -33,12 +33,12 @@ describe('Server', () => {
             register: sinon.stub()
         };
 
-        env.server = sandbox.require('../../src/server/server', {
+        env.server = sandbox.require('../../src/server', {
 			requires: {
                 'config': env.config,
                 'restify': env.restify,
-                './router': env.router,
-                '../lib/log': env.log
+                './lib/router': env.router,
+                './lib/log': env.log
             }
 		});
     });

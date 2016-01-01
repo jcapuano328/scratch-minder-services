@@ -158,7 +158,7 @@ module.exports = {
                 return token.userId;
             });
         })
-        .then((userid) => {            
+        .then((userid) => {
             return getUser({userid: userid});
         })
         .then((user) => {
@@ -175,8 +175,15 @@ module.exports = {
         });
     },
 
-    authorise() {
+    authorise(restricted) {
         return (req,res,next) => {
+            if (!restricted) {
+                new Promise((resolve,reject) => {
+                    resolve();
+                    return next();
+                });
+            }
+
             return this.authorize(req.authorization)
             .then((result) => {
                 if (result) {

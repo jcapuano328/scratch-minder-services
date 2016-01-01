@@ -1,5 +1,6 @@
 'use strict'
-var accounts = require('../services/accounts'),
+var config = require('config'),
+    accounts = require('../services/accounts'),
     log = require('../lib/log');
 
 module.exports = [

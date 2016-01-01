@@ -30,5 +30,30 @@ module.exports = [
                 res.send(400, err);
             });
         }
+    },
+    {
+        method: 'post',
+        uri: '/oauth/verify',
+        protected: false,
+        handler: (req,res,next) => {
+            log.info('Process verification request');
+            let opts = {
+                scheme: 'Bearer',
+                credentials: req.body.access_token
+            };
+            log.trace(JSON.stringify(opts));
+            return oauth.authorize(opts)
+            .then((result) => {
+                if (!result) {
+                    return res.send(401);
+                }
+                res.send(200);
+            })
+            .catch((err) => {
+                log.error(err.message);
+                res.send(400, err);
+            });
+        }
     }
+
 ];

@@ -1,8 +1,8 @@
 'use strict'
 var config = require('config'),
     restify = require('restify'),
-    router = require('./router'),
-    log = require('../lib/log');
+    router = require('./lib/router'),
+    log = require('./lib/log');
 
 var server;
 
@@ -14,7 +14,7 @@ module.exports = {
             server.use(restify.gzipResponse());
             server.use(restify.authorizationParser());
             server.use(restify.queryParser());
-            server.use(restify.bodyParser({mapParams: false}));            
+            server.use(restify.bodyParser({mapParams: false}));
             log.trace('load routes');
             router.register(server)
             .then(() => {

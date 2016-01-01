@@ -41,22 +41,38 @@ describe('OAuth Route', () => {
     });
 
     describe('interface', () => {
-        it('should have a single route', () => {
+        it('should have a 2 routes', () => {
             expect(env.routes).to.be.an.array;
-            expect(env.routes).to.have.length(1);
+            expect(env.routes).to.have.length(2);
         });
-        it('should have a method', () => {
-            expect(env.routes[0]).to.have.property('method', 'post');
-        });
-        it('should have a uri', () => {
-            expect(env.routes[0]).to.have.property('uri', '/oauth/token');
-        });
-        it('should not be protected', () => {
-            expect(env.routes[0]).to.have.property('protected', false);
-        });
-        it('should have a handler', () => {
-            expect(env.routes[0]).to.respondTo('handler');
-        });
+		describe('grant', () => {
+			it('should have a method', () => {
+	            expect(env.routes[0]).to.have.property('method', 'post');
+	        });
+	        it('should have a uri', () => {
+	            expect(env.routes[0]).to.have.property('uri', '/oauth/token');
+	        });
+	        it('should not be protected', () => {
+	            expect(env.routes[0]).to.have.property('protected', false);
+	        });
+	        it('should have a handler', () => {
+	            expect(env.routes[0]).to.respondTo('handler');
+	        });
+		});
+		describe('verify', () => {
+			it('should have a method', () => {
+	            expect(env.routes[1]).to.have.property('method', 'post');
+	        });
+	        it('should have a uri', () => {
+	            expect(env.routes[1]).to.have.property('uri', '/oauth/verify');
+	        });
+	        it('should not be protected', () => {
+	            expect(env.routes[1]).to.have.property('protected', false);
+	        });
+	        it('should have a handler', () => {
+	            expect(env.routes[1]).to.respondTo('handler');
+	        });
+		});
     });
 
     describe('handler', () => {

@@ -17,10 +17,10 @@ describe('Server', () => {
             register: sinon.stub()
         };
 
-        env.server = sandbox.require('../../src/server/server', {
+        env.server = sandbox.require('../../src/server', {
 			requires: {
                 'config': env.config,
-                './router': env.router,
+                '../lib/router': env.router,
                 '../lib/log': env.log
             }
 		});
