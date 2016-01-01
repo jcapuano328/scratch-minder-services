@@ -25,7 +25,7 @@
   },
   "homepage": "https://github.com/jcapuano328/scratch-minder-services#readme",
   "dependencies": {
-    "scratch-minder-nub": "git+ssh://git@github.com:jcapuano328/scratch-minder.git",
+    "scratch-minder-nub": "git+ssh://git@github.com:jcapuano328/scratch-minder-nub.git",
     "config": "^1.17.1",
     "easy-pbkdf2": "^0.1.1",
     "kerberos": "0.0.17",
