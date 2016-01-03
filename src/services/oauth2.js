@@ -102,6 +102,57 @@ function passwordGrant(username, password) {
     });
 }
 
+function authorize(auth) {
+    log.debug('process authorize request');
+    return new Promise((resolve,reject) => {
+        // get bearer token from header
+        if (!auth) {
+            return reject({type: 'validation', message: 'Authorization header missing'});
+        }
+        if (!auth.scheme || auth.scheme.toLowerCase() !== 'bearer') {
+            return reject({type: 'validation', message: 'Authorization scheme invalid'});
+        }
+        if (!auth.credentials) {
+            return reject({type: 'validation', message: 'Authorization credentials missing'});
+        }
+
+        resolve(auth.credentials);
+    })
+    .then((authtoken) => {
+        // fetch token
+        log.debug('find token ' + authtoken);
+        let tokens = Repository('tokens');
+        return tokens.select({type: 'access', token: authtoken})
+        .then((data) => {
+            let token = data && data.length > 0 ? data[0] : null;
+            if (!token) {
+                throw {type: 'process', message: 'Token not found'};
+            }
+            if (!!token.expires && token.expires < new Date()) {
+                throw {type: 'process', message: 'Token expired'};
+            }
+            return token.userId;
+        });
+    })
+    .then((userid) => {
+        return getUser({userid: userid});
+    })
+    .then((user) => {
+        return {
+            userid: user.userid,
+            username: user.username
+        };
+    })
+    .catch((err) => {
+        if (!err.hasOwnProperty('type')) {
+            err = {type: 'process', message: JSON.stringify(err)};
+        }
+        throw err;
+    });
+}
+
+
+
 module.exports = {
     grant(opts) {
         opts = opts || {};
@@ -126,65 +177,18 @@ module.exports = {
         });
     },
 
-    authorize(auth) {
-        log.debug('process authorize request');
-        return new Promise((resolve,reject) => {
-            // get bearer token from header
-            if (!auth) {
-                return reject({type: 'validation', message: 'Authorization header missing'});
-            }
-            if (!auth.scheme || auth.scheme.toLowerCase() !== 'bearer') {
-                return reject({type: 'validation', message: 'Authorization scheme invalid'});
-            }
-            if (!auth.credentials) {
-                return reject({type: 'validation', message: 'Authorization credentials missing'});
-            }
-
-            resolve(auth.credentials);
-        })
-        .then((authtoken) => {
-            // fetch token
-            log.debug('find token ' + authtoken);
-            let tokens = Repository('tokens');
-            return tokens.select({type: 'access', token: authtoken})
-            .then((data) => {
-                let token = data && data.length > 0 ? data[0] : null;
-                if (!token) {
-                    throw {type: 'process', message: 'Token not found'};
-                }
-                if (!!token.expires && token.expires < new Date()) {
-                    throw {type: 'process', message: 'Token expired'};
-                }
-                return token.userId;
-            });
-        })
-        .then((userid) => {
-            return getUser({userid: userid});
-        })
-        .then((user) => {
-            return {
-                userid: user.userid,
-                username: user.username
-            };
-        })
-        .catch((err) => {
-            if (!err.hasOwnProperty('type')) {
-                err = {type: 'process', message: JSON.stringify(err)};
-            }
-            throw err;
-        });
-    },
+    authorize: authorize,
 
     authorise(restricted) {
         return (req,res,next) => {
             if (!restricted) {
-                new Promise((resolve,reject) => {
+                return new Promise((resolve,reject) => {
                     resolve();
                     return next();
                 });
             }
 
-            return this.authorize(req.authorization)
+            return authorize(req.authorization)
             .then((result) => {
                 if (result) {
                     return next();

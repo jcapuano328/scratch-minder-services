@@ -2,7 +2,8 @@
 var chai = require('chai'),
 	expect = chai.expect,
 	sinon = require('sinon'),
-	sandbox = require('sandboxed-module');
+	sandbox = require('sandboxed-module'),
+	_ = require('lodash');
 chai.use(require('sinon-chai'));
 
 describe('Login Route', () => {
@@ -31,6 +32,7 @@ describe('Login Route', () => {
 
         env.routes = sandbox.require('../../src/routes/login', {
             requires: {
+				'lodash': _,
                 '../services/login': env.login,
                 '../lib/log': env.log
             }

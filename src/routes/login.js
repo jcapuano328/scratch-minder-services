@@ -1,6 +1,7 @@
 'use strict'
 var login = require('../services/login'),
-    log = require('../lib/log');
+    log = require('../lib/log'),
+    _ = require('lodash');
 
 module.exports = [
     {
@@ -8,9 +9,22 @@ module.exports = [
         uri: '/login',
         protected: false,
         handler: (req,res,next) => {
-            return login.login(req.body.username, req.body.password)
+            log.info('Received login request');
+            log.trace(JSON.stringify(req.body));
+            return new Promise((resolve,reject) => {
+                if (!req || !req.body) {
+                    return reject('Invalid request body');
+                }
+                return resolve();
+            })
+            .then(() => {
+                return login.login(req.body.username, req.body.password)
+            })
             .then((user) => {
-                res.send(200, user);
+                log.info('Login request successful');
+                let usr = _.pick(user, 'username', 'firstname', 'lastname', 'email');
+                log.trace(JSON.stringify(usr));
+                res.send(200, usr);
             })
             .catch((err) => {
                 log.error(err);
