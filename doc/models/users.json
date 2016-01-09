@@ -5,6 +5,9 @@
     "lastname": string,
     "username": string,
     "status": "active|locked",
+    "roles": {
+        string
+    },
     "password": {
         "salt": string,
         "hash": string

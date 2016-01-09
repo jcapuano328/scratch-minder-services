@@ -3,6 +3,11 @@ var program = require('commander');
 var uuid = require('node-uuid');
 var easyPbkdf2 = require("easy-pbkdf2")();
 
+function collect(val, memo) {
+  memo.push(val);
+  return memo;
+}
+
 function main(args) {
 	try {
 		var opts = {
@@ -10,7 +15,8 @@ function main(args) {
             firstname: args.firstname,
             lastname: args.lastname,
         	username: args.username,
-            password: args.password
+            password: args.password,
+			roles: args.roles || ['user']
 	    };
 
 	    console.error('');
@@ -47,6 +53,7 @@ program
     .option('-f, --firstname <s>', 'First Name')
     .option('-l, --lastname <s>', 'Last Name')
     .option('-e, --email <s>', 'Email Address')
+	.option('-r, --role [r]', 'Role(s)', collect, [])
 	.parse(process.argv);
 
 main(program);

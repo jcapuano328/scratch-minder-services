@@ -1,5 +1,20 @@
 [
     {
+        "email": "sysadmin@scratchminder.com",
+        "firstname": "System",
+        "lastname": "Administrator",
+        "username": "admin",
+        "password": {
+            "salt": "200.Lyc6Ow70lWskWm49qg/Fv7vh794L72Irzc0B9ZqO+yM=",
+            "hash": "vWbkBU/VcSZORPHZIsxPksTIUd8EIOW2gXH0D6mhBWm6zncUIlsJdI89H5z0TxRNOQoBG/GXJEFUUKh53+HoTWVZAvDKyK7CzlBZIc2dSPCMMQSakBdajfASELlB4Ihun/gJ97F/sP1Vw1rffFDG21kcbfdd2G2vM7wRwBYFrKgra8mGR63kw86aoQ4zfuFtyLyksHLt3+GMrlTbY5cHyUwSGBVs9pgNqib45cvh3jonWNhWZpTyfUhsj5zAqaxN1LZz5xbiNRQ3WfT3yDbvKBK9CzJClxN487J7/6T8vF0fW9BTajdcCpbC/mIvV1f1scRkjRje9IlDW2KNPo0Dxw=="
+        },
+        "roles": [
+            "user"
+        ],
+        "userid": "d03c8fa0-b6d4-11e5-b6de-bfee95576f2e",
+        "status": "active"
+    },
+    {
         "email": "jdoe@mail.net",
         "firstname": "John",
         "lastname": "Doe",
@@ -9,7 +24,8 @@
             "hash": "hIvJvB9HO6AcGNtOKmQJGrylNBJwlWalAld24Qfk4v/PltxLQv9iqYJHUBfg0uY8O5TEzGaXDKNBqZzlzqF4EnF1NexpnW5tx6A96AcB/5DySwBbpVcR6eXn0GPhAP5IR9wkgABWUCLjnVhSqn4GgmR1M/paB1sfST4sPaFp7T/bQeEyo0QRPdJjz9psfa09QzMYxMXBXvQZpTI8SUMx/3dfnVonaqSRnC94h4p6ULSn5vytFg7CCrxRRSmW4RpLUfWiup+XEwyzFrST1JmidJWYC9XhD+YV8gG3tn5jxGen2pM4M5asnudLA6uYmDoiL0ZlpvZIgkZ2uCO4vpj/+Q=="
         },
         "userid": "dd90e400-abec-11e5-9ecd-d98e8e26428e",
-        "status": "active"
+        "status": "active",
+        "roles": ["user"]
     },
     {
         "email": "fsmith@mail.net",
@@ -21,7 +37,8 @@
             "hash": "VaKLA83L9uGi0N7DxG4AOfOjghJ3gcFQ76vtOQxhmzVj9kcV9FuaApqDnon94K7lEpqbFXeW5dF98DZnvZ6sm0/0VbxztBEZu8CIvUseC8KXZBYtGLDezLcBljz2dEIt7fX56/QMNGTxxo7KSm1fr1wQnV3e24qJXEdbJeKErrBEBWJ2IxHPEt5/0gV4PMZ6QUf4KBF+L/N/8J+G9DSE7r0rfl6MP/odq/OCoQFanG4X9+ucTYgV68VYdDr/bZuLz9J9H+6ZkWs4QMZ1Sz4ImLNuf6smgzEcorNfCYV3Xtp4W4KHgjkLmbT7fuCzHijsPqL4Q81C/OeuxEZryWAaJA=="
         },
         "userid": "ebda1e00-abec-11e5-ab69-0df5c12f961a",
-        "status": "active"
+        "status": "active",
+        "roles": ["user"]
     },
     {
         "email": "mbailey@mail.net",
@@ -33,6 +50,7 @@
             "hash": "OtKiqgHhKiE79Zxa3Gsc+PaGgN4lE2lMZcstXlwM3SPucfjcaB3RqeTtzZiheVmFdoIWoBIpKwKygWMOje75aY6QcAO/Bb5qaR79g0hNlgAZ1HBUKL+W5BkPiuyrBdYCHT0kRbe2gpAGgt3soBE2MIrrkGrQoAbySqxguIjlEzCFbdDZSCSCh97iYhLaQ8VlfC/VBcGuRxkwx6QKptNoAJAwfaRGKAwyWjAy45rZUBN3kv4HCLjwcUvShxGMpMH4fUprdAYy+jDQb3WS2OiT2gOunpBiJvZJ/TCDnNsbdElWz+hUinfl75SSrtw3Tj4yFLHEkEqA8Lolx74cuisA3w=="
         },
         "userid": "0d9efbf0-abed-11e5-b282-9bee4b8c11d2",
-        "status": "active"
+        "status": "active",
+        "roles": ["user"]
     }
 ]

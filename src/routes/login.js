@@ -21,8 +21,8 @@ module.exports = [
                 return login.login(req.body.username, req.body.password)
             })
             .then((user) => {
-                log.info('Login request successful');
-                let usr = _.pick(user, 'username', 'firstname', 'lastname', 'email');
+                log.info('Login request successful');                
+                let usr = _.pick(user, 'username', 'firstname', 'lastname', 'email', 'roles');
                 log.trace(JSON.stringify(usr));
                 res.send(200, usr);
             })
