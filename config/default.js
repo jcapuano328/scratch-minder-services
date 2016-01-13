@@ -18,7 +18,8 @@ module.exports = {
         }
     },
     auth: {
-        database: 'scratchminder'
+        database: 'scratchminder',
+        tokenLifetime: 60
     },
     log: {
         server: { // server-side logging parameters

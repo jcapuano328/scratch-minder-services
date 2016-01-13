@@ -45,8 +45,10 @@ module.exports = [
             return oauth.authorize(opts)
             .then((result) => {
                 if (!result) {
+                    log.debug('Not Verified');
                     return res.send(401);
                 }
+                log.debug('Verified');
                 res.send(200);
             })
             .catch((err) => {

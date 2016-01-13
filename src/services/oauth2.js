@@ -1,5 +1,6 @@
 'use strict'
-var easyPbkdf2 = require('easy-pbkdf2')(),
+var config = require('config'),
+    easyPbkdf2 = require('easy-pbkdf2')(),
     Repository = require('../lib/repository'),
     genToken = require('../lib/generate-token'),
     log = require('../lib/log');
@@ -31,7 +32,7 @@ function generateToken() {
 }
 
 function saveToken(token, clientId, userId, expires) {
-    expires = expires || nowPlusMins(30);
+    expires = expires || nowPlusMins(config.auth.tokenLifetime || 30);
     log.trace('in saveToken (token: ' + token + ', clientId: ' + clientId + ', userId: ' + userId + ', expires: ' + expires + ')');
     let repo = Repository('tokens');
     return repo.insert({
