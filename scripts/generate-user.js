@@ -27,6 +27,7 @@ function main(args) {
         var user = opts;
         user.userid = uuid.v1();
         user.status = 'active';
+        user.preferredAccount = null;
         easyPbkdf2.secureHash( opts.password, easyPbkdf2.generateSalt(), function( err, passwordHash, originalSalt ) {
             user.password = {
                 salt: originalSalt,

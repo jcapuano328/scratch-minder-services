@@ -22,7 +22,7 @@ module.exports = [
             })
             .then((user) => {
                 log.info('Login request successful');
-                let usr = _.pick(user, 'userid', 'username', 'firstname', 'lastname', 'email', 'roles');
+                let usr = _.pick(user, 'userid', 'username', 'firstname', 'lastname', 'email', 'roles', 'preferredAccount');
                 log.trace(JSON.stringify(usr));
                 res.send(200, usr);
             })
