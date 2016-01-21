@@ -582,7 +582,7 @@ describe('CRUD Services', () => {
         });
     });
 
-    describe.skip('remove', () => {
+    describe('remove', () => {
         beforeEach(() => {
             env.handler = env.service.remove;
         });
@@ -595,7 +595,7 @@ describe('CRUD Services', () => {
                 env.repo.remove.returns(Promise.accept(true));
 
                 env.handler(env.params)
-                .then(done)
+                .then(() => {done();})
                 .catch(done);
             });
             it('should create the respositories', () => {
@@ -640,6 +640,7 @@ describe('CRUD Services', () => {
         describe('stuff missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
+				env.opts.validators.remove.returns(Promise.reject({type: 'validation', message: 'stuff id missing'}));
 
 				env.handler(env.params)
 				.then(done)
@@ -693,7 +694,7 @@ describe('CRUD Services', () => {
         });
     });
 
-    describe.skip('delete all', () => {
+    describe('remove all', () => {
         beforeEach(() => {
             env.handler = env.service.removeAll;
         });
@@ -705,7 +706,7 @@ describe('CRUD Services', () => {
                 env.repo.remove.returns(Promise.accept(true));
 
                 env.handler(env.params)
-                .then(done)
+                .then(() => {done();})
                 .catch(done);
             });
             it('should create the respositories', () => {
@@ -777,5 +778,5 @@ describe('CRUD Services', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
         });
-    });	
+    });
 });

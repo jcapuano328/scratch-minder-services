@@ -21,8 +21,8 @@ describe('CRUD routes', () => {
 		};
 
 		env.opts =  {
-	        service: 'crud-services',
-			servicepath: '../lib/crud-services',
+	        entity: 'stuffs',
+			service: env.services,
 	        user: true,
 	        parent: {
 	            name: 'other',
@@ -33,7 +33,6 @@ describe('CRUD routes', () => {
 
         env.routes = sandbox.require('../../src/lib/crud-routes', {
             requires: {
-                '../lib/crud-services': env.services,
                 '../lib/log': env.log
             }
         })(env.opts);
@@ -53,7 +52,7 @@ describe('CRUD routes', () => {
                 expect(env.route).to.have.property('method', 'post');
             });
             it('should have a uri', () => {
-                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/crud-services');
+                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/stuffs');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);
@@ -70,7 +69,7 @@ describe('CRUD routes', () => {
                 expect(env.route).to.have.property('method', 'get');
             });
             it('should have a uri', () => {
-                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/crud-services/:id');
+                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/stuffs/:id');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);
@@ -87,7 +86,7 @@ describe('CRUD routes', () => {
                 expect(env.route).to.have.property('method', 'get');
             });
             it('should have a uri', () => {
-                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/crud-services');
+                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/stuffs');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);
@@ -104,7 +103,7 @@ describe('CRUD routes', () => {
                 expect(env.route).to.have.property('method', 'put');
             });
             it('should have a uri', () => {
-                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/crud-services/:id');
+                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/stuffs/:id');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);
@@ -121,7 +120,7 @@ describe('CRUD routes', () => {
                 expect(env.route).to.have.property('method', 'del');
             });
             it('should have a uri', () => {
-                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/crud-services/:id');
+                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/stuffs/:id');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);
@@ -138,7 +137,7 @@ describe('CRUD routes', () => {
                 expect(env.route).to.have.property('method', 'del');
             });
             it('should have a uri', () => {
-                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/crud-services');
+                expect(env.route).to.have.property('uri', '/user/:userid/other/:other_id/stuffs');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);

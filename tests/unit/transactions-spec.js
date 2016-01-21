@@ -6,11 +6,12 @@ var chai = require('chai'),
     _ = require('lodash');
 chai.use(require('sinon-chai'));
 
-describe('Accounts Service', () => {
+describe('Transactions Service', () => {
 	var env = {};
 	beforeEach(() => {
 		env = {};
         env.log = sandbox.require('../mocks/log')();
+
         env.repo = {
             select: sinon.stub(),
             insert: sinon.stub(),
@@ -18,13 +19,34 @@ describe('Accounts Service', () => {
             remove: sinon.stub(),
             save: sinon.stub()
         };
-        env.respository = sinon.stub().returns(env.repo);
+        env.Repository = sinon.stub().returns(env.repo);
+
+		env.user = {
+            username: 'testuser'
+        };
+        env.transaction = {
+            "transactionid": "908028408",
+			"accountid": "abc123",
+            "type": "set",
+            "sequence": "BAL",
+            "category": "Balance",
+            "description": "Set the opening balance",
+            "amount": 5678.90,
+            "when": new Date()
+        };
+        env.dbtransaction = _.extend({_id: 'uniqueid'}, env.transaction);
 
 		env.params = {};
 
+		env.crudServices = sandbox.require('../../src/lib/crud-services', {
+			requires: {
+				'../lib/repository': env.Repository,
+				'../lib/log': env.log
+			}
+		});
         env.service = sandbox.require('../../src/services/transactions', {
             requires: {
-                '../lib/repository': env.respository,
+                '../lib/crud-services': env.crudServices,
                 '../lib/log': env.log
             }
         });
@@ -59,36 +81,36 @@ describe('Accounts Service', () => {
         describe('success', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.repo.select.returns(Promise.accept([env.user]));
-                env.repo.insert.returns(Promise.accept(env.dbaccount));
+				env.repo.select.returns(Promise.accept([env.user]));
+                env.repo.insert.returns(Promise.accept(env.dbtransaction));
 
-                env.handler(env.params,env.account)
+                env.handler(env.params,env.transaction)
                 .then(() => {done();})
                 .catch(done);
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should insert the data', () => {
                 expect(env.repo.insert).to.have.been.calledOnce;
-                expect(env.repo.insert).to.have.been.calledWith(env.account);
+                expect(env.repo.insert).to.have.been.calledWith(env.transaction);
             });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-				env.handler(env.params,env.account)
+				env.handler(env.params,env.transaction)
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
@@ -96,8 +118,8 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -107,19 +129,19 @@ describe('Accounts Service', () => {
             });
         });
 
-        describe('account missing', () => {
+        describe('transaction missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
 				env.handler(env.params)
 				.then(done)
 				.catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account missing');
+					expect(err).to.have.property('message', 'Transaction missing');
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -129,20 +151,20 @@ describe('Accounts Service', () => {
             });
         });
 
-        describe('account number missing', () => {
+        describe('transaction sequence missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.account.number = null;
-				env.handler(env.params, env.account)
+                env.transaction.sequence = null;
+				env.handler(env.params, env.transaction)
 				.then(done)
 				.catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account number invalid');
+					expect(err).to.have.property('message', 'Transaction sequence invalid');
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -152,20 +174,20 @@ describe('Accounts Service', () => {
             });
         });
 
-        describe('account name missing', () => {
+        describe('transaction description missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.account.name = '';
-				env.handler(env.params, env.account)
+                env.transaction.description = '';
+				env.handler(env.params, env.transaction)
 				.then(done)
 				.catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account name invalid');
+					expect(err).to.have.property('message', 'Transaction description invalid');
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -180,7 +202,7 @@ describe('Accounts Service', () => {
                 env.params.userid = 'user123';
                 env.repo.select.returns(Promise.accept([]));
 
-				env.handler(env.params, env.account)
+				env.handler(env.params, env.transaction)
 				.then(done)
 				.catch((err) => {
 					expect(err).to.have.property('type', 'process');
@@ -188,14 +210,14 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledOnce;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should not create the accounts respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('accounts', env.user.username);
+            it('should not create the transactions repository', () => {
+                expect(env.Repository).to.not.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
@@ -203,8 +225,8 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should not select the account', () => {
-                expect(env.repo.select).to.not.have.been.calledWith({accountid: 'account123'});
+            it('should not select the transaction', () => {
+                expect(env.repo.select).to.not.have.been.calledWith({transactionid: 'transaction123'});
             });
         });
     });
@@ -217,9 +239,9 @@ describe('Accounts Service', () => {
         describe('success', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.params.id = 'account123';
+                env.params.id = 'transaction123';
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
-                env.repo.select.onSecondCall().returns(Promise.accept([env.dbaccount]));
+                env.repo.select.onSecondCall().returns(Promise.accept([env.dbtransaction]));
 
                 env.handler(env.params)
 				.then((result) => {
@@ -228,14 +250,14 @@ describe('Accounts Service', () => {
 				})
 				.catch(done);
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledTwice;
@@ -243,10 +265,10 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should select the account', () => {
-                expect(env.repo.select).to.have.been.calledWith({accountid: 'account123'});
+            it('should select the transaction', () => {
+                expect(env.repo.select).to.have.been.calledWith({transactionid: 'transaction123'});
             });
-            it('should return account', () => {
+            it('should return transaction', () => {
                 expect(env.result).to.exist;
             });
         });
@@ -261,15 +283,15 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should not create respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not select data', () => {
                 expect(env.repo.select).to.not.have.been.called;
             });
         });
 
-        describe('account missing', () => {
+        describe('transaction missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
 
@@ -277,12 +299,12 @@ describe('Accounts Service', () => {
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account id missing');
+					expect(err).to.have.property('message', 'Transaction id missing');
 					done();
 				});
             });
-            it('should not create respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not select data', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -292,7 +314,7 @@ describe('Accounts Service', () => {
         describe('user not found', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.params.id = 'account123';
+                env.params.id = 'transaction123';
                 env.repo.select.onFirstCall().returns(Promise.accept([]));
 
 				env.handler(env.params)
@@ -303,14 +325,14 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledOnce;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should not create the accounts respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('accounts', env.user.username);
+            it('should not create the transactions repository', () => {
+                expect(env.Repository).to.not.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
@@ -318,15 +340,15 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should not select the account', () => {
-                expect(env.repo.select).to.not.have.been.calledWith({accountid: 'account123'});
+            it('should not select the transaction', () => {
+                expect(env.repo.select).to.not.have.been.calledWith({transactionid: 'transaction123'});
             });
         });
 
-        describe('account not found', () => {
+        describe('transaction not found', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.params.id = 'account123';
+                env.params.id = 'transaction123';
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
                 env.repo.select.onSecondCall().returns(Promise.accept([]));
 
@@ -334,18 +356,18 @@ describe('Accounts Service', () => {
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'process');
-					expect(err).to.have.property('message', 'Account not found');
+					expect(err).to.have.property('message', 'transactions not found');
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledTwice;
@@ -353,8 +375,8 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should select the account', () => {
-                expect(env.repo.select).to.have.been.calledWith({accountid: 'account123'});
+            it('should select the transaction', () => {
+                expect(env.repo.select).to.have.been.calledWith({transactionid: 'transaction123'});
             });
         });
     });
@@ -368,7 +390,7 @@ describe('Accounts Service', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
-                env.repo.select.onSecondCall().returns(Promise.accept([env.dbaccount, env.dbaccount]));
+                env.repo.select.onSecondCall().returns(Promise.accept([env.dbtransaction, env.dbtransaction]));
 
 				env.handler(env.params)
 				.then((result) => {
@@ -377,14 +399,14 @@ describe('Accounts Service', () => {
 				})
 				.catch(done);
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledTwice;
@@ -392,10 +414,10 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should select the account', () => {
+            it('should select the transaction', () => {
                 expect(env.repo.select).to.have.been.calledWith({});
             });
-            it('should return accounts', () => {
+            it('should return transactions', () => {
                 expect(env.result).to.exist;
 				expect(env.result).to.be.an.array;
 				expect(env.result).to.have.length(2);
@@ -412,8 +434,8 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should not create respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not select data', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -433,14 +455,14 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledOnce;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should not create the accounts respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('accounts', env.user.username);
+            it('should not create the transactions repository', () => {
+                expect(env.Repository).to.not.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
@@ -448,7 +470,7 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should not select the account', () => {
+            it('should not select the transaction', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({});
             });
         });
@@ -462,43 +484,43 @@ describe('Accounts Service', () => {
         describe('success', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-				env.params.id = 'account123';
+				env.params.id = 'transaction123';
                 env.repo.select.returns(Promise.accept([env.user]));
-                env.repo.save.returns(Promise.accept(env.dbaccount));
+                env.repo.save.returns(Promise.accept(env.dbtransaction));
 
-                env.handler(env.params,env.account)
+                env.handler(env.params,env.transaction)
                 .then((result) => {
 					env.result = result;
 					done();
 				})
                 .catch(done);
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should save the data', () => {
                 expect(env.repo.save).to.have.been.calledOnce;
-                expect(env.repo.save).to.have.been.calledWith(env.account);
+                expect(env.repo.save).to.have.been.calledWith(env.transaction);
             });
-            it('should return the account', () => {
+            it('should return the transaction', () => {
                 expect(env.result).to.exist;
             });
         });
 
         describe('user missing', () => {
             beforeEach((done) => {
-                env.handler(env.params,env.account)
+                env.handler(env.params,env.transaction)
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
@@ -506,8 +528,8 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -517,7 +539,7 @@ describe('Accounts Service', () => {
             });
         });
 
-        describe('account missing', () => {
+        describe('transaction missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
 
@@ -525,12 +547,12 @@ describe('Accounts Service', () => {
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account missing');
+					expect(err).to.have.property('message', 'Transaction missing');
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -540,21 +562,21 @@ describe('Accounts Service', () => {
             });
         });
 
-        describe('account number missing', () => {
+        describe('transaction sequence missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.account.number = null;
+                env.transaction.sequence = null;
 
-				env.handler(env.params,env.account)
+				env.handler(env.params,env.transaction)
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account number invalid');
+					expect(err).to.have.property('message', 'Transaction sequence invalid');
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -564,21 +586,21 @@ describe('Accounts Service', () => {
             });
         });
 
-        describe('account name missing', () => {
+        describe('transaction description missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.account.name = '';
+                env.transaction.description = '';
 
-				env.handler(env.params,env.account)
+				env.handler(env.params,env.transaction)
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account name invalid');
+					expect(err).to.have.property('message', 'Transaction description invalid');
 					done();
 				});
             });
-            it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create the repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -593,7 +615,7 @@ describe('Accounts Service', () => {
                 env.params.userid = 'user123';
                 env.repo.select.returns(Promise.accept([]));
 
-				env.handler(env.params,env.account)
+				env.handler(env.params,env.transaction)
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'process');
@@ -601,14 +623,14 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledOnce;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should not create the accounts respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('accounts', env.user.username);
+            it('should not create the transactions repository', () => {
+                expect(env.Repository).to.not.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the data', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
@@ -616,8 +638,8 @@ describe('Accounts Service', () => {
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should not select the account', () => {
-                expect(env.repo.select).to.not.have.been.calledWith({accountid: 'account123'});
+            it('should not select the transaction', () => {
+                expect(env.repo.select).to.not.have.been.calledWith({transactionid: 'transaction123'});
             });
 			it('should not save the data', () => {
                 expect(env.repo.save).to.not.have.been.called;
@@ -633,29 +655,29 @@ describe('Accounts Service', () => {
         describe('success', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.params.id = 'account123';
+                env.params.id = 'transaction123';
                 env.repo.select.returns(Promise.accept([env.user]));
                 env.repo.remove.returns(Promise.accept(true));
 
                 env.handler(env.params)
-                .then(done)
+                .then(() => {done();})
                 .catch(done);
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should remove the account', () => {
-                expect(env.repo.remove).to.have.been.calledWith({accountid: 'account123'});
+            it('should remove the transaction', () => {
+                expect(env.repo.remove).to.have.been.calledWith({transactionid: 'transaction123'});
             });
         });
 
@@ -669,18 +691,18 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should not create respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not select user', () => {
                 expect(env.repo.select).to.not.have.been.called;
             });
-            it('should not delete account', () => {
+            it('should not delete transaction', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
         });
 
-        describe('account missing', () => {
+        describe('transaction missing', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
 
@@ -688,17 +710,17 @@ describe('Accounts Service', () => {
 				.then(done)
                 .catch((err) => {
 					expect(err).to.have.property('type', 'validation');
-					expect(err).to.have.property('message', 'Account id missing');
+					expect(err).to.have.property('message', 'Transaction id missing');
 					done();
 				});
             });
-            it('should not create respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not select user', () => {
                 expect(env.repo.select).to.not.have.been.called;
             });
-            it('should not delete account', () => {
+            it('should not delete transaction', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
         });
@@ -706,7 +728,7 @@ describe('Accounts Service', () => {
         describe('user not found', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
-                env.params.id = 'account123';
+                env.params.id = 'transaction123';
                 env.repo.select.returns(Promise.accept([]));
 
 				env.handler(env.params)
@@ -717,26 +739,26 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledOnce;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should not create the accounts respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('accounts', env.user.username);
+            it('should not create the transactions repository', () => {
+                expect(env.Repository).to.not.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should not delete account', () => {
+            it('should not delete transaction', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
         });
     });
 
-    describe('delete all', () => {
+    describe('remove all', () => {
         beforeEach(() => {
             env.handler = env.service.removeAll;
         });
@@ -748,23 +770,23 @@ describe('Accounts Service', () => {
                 env.repo.remove.returns(Promise.accept(true));
 
                 env.handler(env.params)
-                .then(done)
+                .then(() => {done();})
                 .catch(done);
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledTwice;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should create the accounts respository', () => {
-                expect(env.respository).to.have.been.calledWith('accounts', env.user.username);
+            it('should create the transactions repository', () => {
+                expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should remove the accounts', () => {
+            it('should remove the transactions', () => {
                 expect(env.repo.remove).to.have.been.calledWith({});
             });
         });
@@ -779,13 +801,13 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should not create respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+            it('should not create repositories', () => {
+                expect(env.Repository).to.not.have.been.called;
             });
             it('should not select user', () => {
                 expect(env.repo.select).to.not.have.been.called;
             });
-            it('should not delete account', () => {
+            it('should not delete transaction', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
         });
@@ -803,20 +825,20 @@ describe('Accounts Service', () => {
 					done();
 				});
             });
-            it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+            it('should create the repositories', () => {
+                expect(env.Repository).to.have.been.calledOnce;
             });
-            it('should create the users respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the users repository', () => {
+                expect(env.Repository).to.have.been.calledWith('users');
             });
-            it('should not create the accounts respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('accounts', env.user.username);
+            it('should not create the transactions repository', () => {
+                expect(env.Repository).to.not.have.been.calledWith('transactions', env.user.username);
             });
             it('should select the user', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
-            it('should not delete account', () => {
+            it('should not delete transaction', () => {
                 expect(env.repo.remove).to.not.have.been.called;
             });
         });

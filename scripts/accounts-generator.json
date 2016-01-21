@@ -2,7 +2,7 @@
   {
     'repeat:5': {
       _id: '{{objectId()}}',
-      accountId: '{{guid()}}',
+      accountid: '{{guid()}}',
       number: '{{integer(100000, 999999)}}',
       name: '{{lorem(1, "words")}}',
       sequence: '{{index()}}',

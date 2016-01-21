@@ -2,51 +2,32 @@
 var Repository = require('../lib/repository'),
     log = require('../lib/log');
 
-let validateUser = (includeuser, params) => {
-    return new Promise((resolve,reject) => {
-        if (includeuser && (!params || !params.userid)) {
-            return reject({type: 'validation', message: 'User id missing'});
-        }
-        resolve(true);
-    });
-}
-
-let validateTrue = () => { return Promise.accept(true); };
-
-let retrieveUser = (userid) => {
-    log.debug(userid);
-    log.debug('retrieve user');
-    let users = Repository('users');
-    return users.select({userid: userid})
-    .then((data) => {
-        if (!data || data.length < 1) {
-            throw {type: 'process', message: 'User not found'};
-        }
-        let user = data[0];
-        log.debug('user found: ' + user.username);
-        return user;
-    });
-}
-
 /* opts
         collection: collection name
         collectionid: collection id field name
         user:       true/false
         validators:
             create:
-            read:
-            readAll:
-            update:
-            remove:
-            removeAll:
                 params:
                 data:
+            read:
+                params:
+            readAll:
+                params:
+            update:
+                params:
+                data:
+            remove:
+                params:
+            removeAll:
+                params:
  */
-module.exports = (opts) => {
+let crudServices = (opts) => {
     opts = opts || {
         collection: '',
         collectionid: '',
-        user: true
+        user: true,
+        validators: {}
     };
     opts.validators = opts.validators || {};
     opts.validators.create = opts.validators.create || validateTrue;
@@ -160,7 +141,7 @@ module.exports = (opts) => {
             log.info('Remove ' + opts.collection);
             return validateUser(opts.user, params)
             .then((valid) => {
-                return opts.validators.remove(params, data);
+                return opts.validators.remove(params);
             })
             .then((valid) => {
                 return retrieveUser(params.userid);
@@ -184,7 +165,7 @@ module.exports = (opts) => {
             log.info('Remove ' + opts.collection);
             return validateUser(opts.user, params)
             .then((valid) => {
-                return opts.validators.removeAll(params, data);
+                return opts.validators.removeAll(params);
             })
             .then((valid) => {
                 return retrieveUser(params.userid);
@@ -203,4 +184,32 @@ module.exports = (opts) => {
             });
         }
     };
+};
+
+let validateUser = (includeuser, params) => {
+    return new Promise((resolve,reject) => {
+        if (includeuser && (!params || !params.userid)) {
+            return reject({type: 'validation', message: 'User id missing'});
+        }
+        resolve(true);
+    });
 }
+
+let validateTrue = () => { return Promise.accept(true); };
+
+let retrieveUser = (userid) => {
+    log.debug(userid);
+    log.debug('retrieve user');
+    let users = Repository('users');
+    return users.select({userid: userid})
+    .then((data) => {
+        if (!data || data.length < 1) {
+            throw {type: 'process', message: 'User not found'};
+        }
+        let user = data[0];
+        log.debug('user found: ' + user.username);
+        return user;
+    });
+}
+
+module.exports = crudServices;

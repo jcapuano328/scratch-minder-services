@@ -12,14 +12,18 @@ if "%database%" == "" (
     set database=jdoe
 )
 
-rem @echo Loading users...
-rem mongoimport -h %server% --port 27017 -d scratchminder -c users --drop --jsonArray --stopOnError --file "%BASE_DIR%\..\tests\seed\users.json"
+@echo Loading users...
+mongoimport -h %server% --port 27017 -d scratchminder -c users --drop --jsonArray --stopOnError --file "%BASE_DIR%\..\tests\seed\users.json"
 
-rem @echo Loading tokens...
-rem mongoimport -h %server% --port 27017 -d scratchminder -c tokens --drop --jsonArray --stopOnError --file "%BASE_DIR%\..\tests\seed\tokens.json"
+@echo Loading tokens...
+mongoimport -h %server% --port 27017 -d scratchminder -c tokens --drop --jsonArray --stopOnError --file "%BASE_DIR%\..\tests\seed\tokens.json"
 
 @echo Loading accounts...
 mongoimport -h %server% --port 27017 -d %database% -c accounts --drop --jsonArray --stopOnError --file "%BASE_DIR%\..\tests\seed\accounts.json"
+
+@echo Loading transactions...
+mongoimport -h %server% --port 27017 -d %database% -c transactions --drop --jsonArray --stopOnError --file "%BASE_DIR%\..\tests\seed\transactions.json"
+
 
 rem pause
 endlocal

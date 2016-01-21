@@ -1,6 +1,8 @@
 # scratch-minder-services
 Services for scratch-minder
 
+Relocate Crud-Services and Crud-Routes to Nub...
+
 ### Services
 
 #### Authentication
@@ -33,3 +35,5 @@ Services for scratch-minder
 https://nodejs.org/en/docs/es6/
 
 https://github.com/thomseddon/node-oauth2-server
+
+http://beta.json-generator.com/

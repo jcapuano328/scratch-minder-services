@@ -1,7 +1,7 @@
 [
   {
     "_id": "5691655ddd621b15858e3c56",
-    "accountId": "b8f43f35-9712-4780-a7a3-7e025043bca8",
+    "accountid": "b8f43f35-9712-4780-a7a3-7e025043bca8",
     "number": 436150,
     "name": "non",
     "sequence": 0,
@@ -18,7 +18,7 @@
   },
   {
     "_id": "5691655d27cf84167672e85c",
-    "accountId": "9a4c700c-a4dc-4b88-ab75-99798bf2231c",
+    "accountid": "9a4c700c-a4dc-4b88-ab75-99798bf2231c",
     "number": 458549,
     "name": "deserunt",
     "sequence": 1,
@@ -35,7 +35,7 @@
   },
   {
     "_id": "5691655d0a75def96eae8ae2",
-    "accountId": "7b446767-944b-4919-8c93-bd6e982ca09e",
+    "accountid": "7b446767-944b-4919-8c93-bd6e982ca09e",
     "number": 649371,
     "name": "reprehenderit",
     "sequence": 2,
@@ -52,7 +52,7 @@
   },
   {
     "_id": "5691655d6120997413cdaefa",
-    "accountId": "a5de925b-0155-4328-8a2c-aa266dbe32c3",
+    "accountid": "a5de925b-0155-4328-8a2c-aa266dbe32c3",
     "number": 433348,
     "name": "ullamco",
     "sequence": 3,
@@ -69,7 +69,7 @@
   },
   {
     "_id": "5691655da377a15460b1e5da",
-    "accountId": "1ab35951-16e7-4f52-b5ad-88300080205d",
+    "accountid": "1ab35951-16e7-4f52-b5ad-88300080205d",
     "number": 593706,
     "name": "consequat",
     "sequence": 4,

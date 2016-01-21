@@ -1,0 +1,15 @@
+[
+  {
+    'repeat:25': {
+      _id: '{{objectId()}}',
+      accountid: 'b8f43f35-9712-4780-a7a3-7e025043bca8',
+      transactionid: '{{guid()}}',
+      type: '{{random("credit", "debit", "set")}}',
+      sequence: '{{index()}}',
+      category: '{{lorem(1, "words")}}',
+      description: '{{lorem(3, "words")}}',
+      amount: '{{floating(100, 500, 2)}}',
+      when: '{{date()}}'
+    }
+  }
+]
