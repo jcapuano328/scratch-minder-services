@@ -13,7 +13,7 @@
       "category": "magna",
       "description": "veniam eiusmod aliquip",
       "amount": 364.6,
-      "when": "Tue Aug 11 1981 07:05:13 GMT+0000 (UTC)"
+      "when": ISODate('1971-08-17T00:05:24+00:00')
     }
   },
   {
@@ -30,7 +30,7 @@
       "category": "quis",
       "description": "aute esse quis",
       "amount": 351.79,
-      "when": "Mon Nov 02 2009 05:54:15 GMT+0000 (UTC)"
+      "when": ISODate('1971-08-17T00:05:24+00:00')
     }
   },
   {
@@ -47,7 +47,7 @@
       "category": "amet",
       "description": "aute esse et",
       "amount": 223.7,
-      "when": "Mon May 10 2010 21:30:45 GMT+0000 (UTC)"
+      "when": ISODate('1971-08-17T00:05:24+00:00')
     }
   },
   {
@@ -64,7 +64,7 @@
       "category": "occaecat",
       "description": "eiusmod ea nulla",
       "amount": 322.88,
-      "when": "Sat Apr 30 1988 07:44:19 GMT+0000 (UTC)"
+      "when": ISODate('1971-08-17T00:05:24+00:00')
     }
   },
   {
@@ -81,7 +81,7 @@
       "category": "sunt",
       "description": "consequat fugiat aliqua",
       "amount": 307.28,
-      "when": "Thu Jun 09 1977 00:29:42 GMT+0000 (UTC)"
+      "when": ISODate('1971-08-17T00:05:24+00:00')
     }
   }
 ]

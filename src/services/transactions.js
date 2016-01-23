@@ -8,6 +8,11 @@ var validTransactionType = (type) => {
 let opts = {
     collection: 'transactions',
     collectionid: 'transactionid',
+    options: {
+        sort: {
+            when: 1
+        }
+    },
     user: true,
     validators: {
         create(params, transaction) {

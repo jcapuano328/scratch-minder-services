@@ -74,7 +74,7 @@ let crudServices = (opts) => {
                 let repo = Repository(opts.collection, user.username);
                 let query = {};
                 query[opts.collectionid] = params.id;
-                return repo.select(query);
+                return repo.select(query, opts.options);
             })
             .then((result) => {
                 if (!result || result.length < 1) {
@@ -101,7 +101,7 @@ let crudServices = (opts) => {
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
-                return repo.select({});
+                return repo.select({}, opts.options);
             })
             .then((result) => {
                 result = result || [];

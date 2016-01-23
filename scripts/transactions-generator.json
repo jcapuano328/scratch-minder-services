@@ -9,7 +9,7 @@
       category: '{{lorem(1, "words")}}',
       description: '{{lorem(3, "words")}}',
       amount: '{{floating(100, 500, 2)}}',
-      when: '{{date()}}'
+      when: 'ISODate("{{moment(this.date(new Date(2014,1,1))).format()}}")'
     }
   }
 ]
