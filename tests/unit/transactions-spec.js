@@ -47,6 +47,7 @@ describe('Transactions Service', () => {
         env.service = sandbox.require('../../src/services/transactions', {
             requires: {
                 '../lib/crud-services': env.crudServices,
+				'lodash': _,
                 '../lib/log': env.log
             }
         });

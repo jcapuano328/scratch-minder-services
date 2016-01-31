@@ -6,7 +6,6 @@
       number: '{{integer(100000, 999999)}}',
       name: '{{lorem(1, "words")}}',
       sequence: '{{index()}}',
-      balance: '{{floating(100, 25000, 2)}}',
       lastActivity: {
           transactionid: '{{guid()}}',
           type: '{{random("credit", "debit", "set")}}',
@@ -14,7 +13,8 @@
           category: '{{lorem(1, "words")}}',
           description: '{{lorem(3, "words")}}',
           amount: '{{floating(100, 500, 2)}}',
-          when: 'ISODate("{{moment(this.date(new Date(2014,1,1))).format()}}")'
+          when: 'ISODate("{{moment(this.date(new Date(2014,1,1))).format()}}")',
+          balance: '{{floating(100, 25000, 2)}}'
       }
     }
   }

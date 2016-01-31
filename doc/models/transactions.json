@@ -1,10 +1,11 @@
 {
-    "transactionid": string,    
+    "transactionid": string,
     "accountid": string,
     "type": "credit|debit|set",
     "sequence": string,
     "category": string,
     "description": string,
     "amount": number,
-    "when": datetime
+    "when": datetime,
+    "balance": number
 }

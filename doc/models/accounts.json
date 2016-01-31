@@ -1,9 +1,8 @@
-{    
+{
     "accountid": string,
     "number": string,
     "name": string,
     "sequence": string,
-    "balance": number,
     "lastActivity": {
         "transactionid": string,
         "type": "credit|debit|set",
@@ -11,6 +10,7 @@
         "category": string,
         "description": string,
         "amount": number,
-        "when": datetime
+        "when": datetime,
+        "balance": number
     }
 }

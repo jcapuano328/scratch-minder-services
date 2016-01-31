@@ -1,8 +1,32 @@
 'use strict'
 var CrudServices = require('../lib/crud-services'),
+    _ = require('lodash'),
     log = require('../lib/log');
 var validTransactionType = (type) => {
     return (['credit','debit','set'].indexOf(type) >= 0);
+}
+
+var checkTypes = (transaction) => {
+    if (!transaction.hasOwnProperty('amount')) {
+        transaction.amount = 0;
+    }
+    else if (!_.isNumber(transaction.amount)) {
+        transaction.amount = parseFloat(transaction.amount);
+    }
+
+    if (!transaction.hasOwnProperty('balance')) {
+        transaction.balance = 0;
+    }
+    else if (!_.isNumber(transaction.balance)) {
+        transaction.balance = parseFloat(transaction.balance);
+    }
+
+    if (!transaction.when) {
+        transaction.when = new Date();
+    }
+    else if (!_.isDate(transaction.when)) {
+        transaction.when = new Date(transaction.when);
+    }
 }
 
 let opts = {
@@ -10,7 +34,7 @@ let opts = {
     collectionid: 'transactionid',
     options: {
         sort: {
-            when: 1
+            when: -1
         }
     },
     user: true,
@@ -30,6 +54,9 @@ let opts = {
                 if (!transaction.description) {
                     return reject({type: 'validation', message: 'Transaction description invalid'});
                 }
+
+                checkTypes(transaction);
+
                 resolve(true);
             });
         },
@@ -64,6 +91,9 @@ let opts = {
                 if (!transaction.description) {
                     return reject({type: 'validation', message: 'Transaction description invalid'});
                 }
+
+                checkTypes(transaction);
+
                 resolve(true);
             });
         },
