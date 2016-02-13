@@ -31,7 +31,9 @@ describe('CRUD Services', () => {
 				update: sinon.stub(),
 				remove: sinon.stub(),
 				removeAll: sinon.stub()
-			}
+			},
+			createNew: sinon.stub(),
+			newOptions: sinon.stub()
 	    };
 
 		env.user = {
@@ -336,6 +338,55 @@ describe('CRUD Services', () => {
             });
             it('should select the stuff', () => {
                 expect(env.repo.select).to.have.been.calledWith({stuffid: 'stuff123'});
+            });
+        });
+
+		describe('new', () => {
+            beforeEach((done) => {
+				env.opts.createNew.returns({q:1,r:2,s:3});
+				env.opts.newOptions.returns({sort: {foo: -1}});
+                env.params.userid = 'user123';
+                env.params.id = 'new';
+                env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
+                env.repo.select.onSecondCall().returns(Promise.accept([env.dbstuff]));
+
+                env.handler(env.params)
+				.then((result) => {
+					env.result = result;
+					done();
+				})
+				.catch(done);
+            });
+            it('should create the respositories', () => {
+                expect(env.respository).to.have.been.calledTwice;
+            });
+            it('should create the users respository', () => {
+                expect(env.respository).to.have.been.calledWith('users');
+            });
+            it('should create the stuffs respository', () => {
+                expect(env.respository).to.have.been.calledWith('stuffs', env.user.username);
+            });
+            it('should select the data', () => {
+                expect(env.repo.select).to.have.been.calledTwice;
+            });
+            it('should select the user', () => {
+                expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
+            });
+            it('should select the stuff', () => {
+                expect(env.repo.select).to.have.been.calledWith({},{sort: {foo: -1}});
+            });
+			it('should create new stuff', () => {
+				expect(env.opts.newOptions).to.have.been.calledOnce;
+                expect(env.opts.createNew).to.have.been.calledOnce;
+				expect(env.opts.createNew).to.have.been.calledWith(env.params, env.dbstuff);
+            });
+            it('should return new stuff', () => {
+                expect(env.result).to.exist;
+				expect(env.result).to.deep.equal({
+					q: 1,
+					r: 2,
+					s: 3
+				});
             });
         });
     });

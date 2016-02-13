@@ -1,6 +1,8 @@
 'use strict'
 var CrudServices = require('../lib/crud-services'),
+    balances = require('../services/balances'),
     _ = require('lodash'),
+    uuid = require('node-uuid'),
     log = require('../lib/log');
 var validTransactionType = (type) => {
     return (['credit','debit','set'].indexOf(type) >= 0);
@@ -26,6 +28,15 @@ var checkTypes = (transaction) => {
     }
     else if (!_.isDate(transaction.when)) {
         transaction.when = new Date(transaction.when);
+    }
+}
+
+let nextSequence = (sequence) => {
+    try {
+        let seq = parseInt(sequence, 10);
+        return seq + 1;
+    } catch (e) {
+        return 1;
     }
 }
 
@@ -110,6 +121,30 @@ let opts = {
             log.debug('Validate remove all transactions');
             return Promise.accept(true);
         }
+    },
+    createNew(params, d) {
+        return {
+            transactionid: uuid.v1(),
+            accountid: params.accountid,
+            type: '',
+            sequence: nextSequence(d.sequence),
+            category: '',
+            description: '',
+            amount: 0,
+            when: new Date(),
+            balance: d.balance
+        };
+    },
+    newOptions() {
+        return {
+            sort: {
+                sequence: -1
+            }
+        };
+    },
+    postProcess(operation, transaction, user) {
+        // after an insert, update, or delete, must adjust the balance of all succeeding transactions and the account balance        
+        return balances(operation, transaction, user);
     }
 };
 

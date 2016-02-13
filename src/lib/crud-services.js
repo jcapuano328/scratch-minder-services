@@ -5,6 +5,8 @@ var Repository = require('../lib/repository'),
 /* opts
         collection: collection name
         collectionid: collection id field name
+        options:
+                    mongo options: sort, etc
         user:       true/false
         validators:
             create:
@@ -21,6 +23,14 @@ var Repository = require('../lib/repository'),
                 params:
             removeAll:
                 params:
+        createNew
+            params:
+            data:
+        newOptions
+        postProcess
+            operation:
+            data:
+            user:
  */
 let crudServices = (opts) => {
     opts = opts || {
@@ -36,6 +46,8 @@ let crudServices = (opts) => {
     opts.validators.update = opts.validators.update || validateTrue;
     opts.validators.remove = opts.validators.remove || validateTrue;
     opts.validators.removeAll = opts.validators.removeAll || validateTrue;
+    opts.createNew = opts.createNew || ((params, d) => {return d;});
+    opts.postProcess = opts.postProcess || ((o,d,u) => { return Promise.accept(d); });
 
     return {
         create(params, data) {
@@ -49,11 +61,14 @@ let crudServices = (opts) => {
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
-                return repo.insert(data);
-            })
-            .then((result) => {
-                log.debug(opts.collection + ' created');
-                return result;
+                return repo.insert(data)
+                .then((result) => {
+                    log.debug(opts.collection + ' created');
+                    return opts.postProcess('create', data, user)
+                    .then((d) => {
+                        return d || result;
+                    });
+                });
             })
             .catch((err) => {
                 log.error(err.message);
@@ -73,14 +88,23 @@ let crudServices = (opts) => {
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
                 let query = {};
-                query[opts.collectionid] = params.id;
-                return repo.select(query, opts.options);
+                let options = opts.options;
+                if (params.id == 'new') {
+                    options = opts.newOptions();
+                }
+                else {
+                    query[opts.collectionid] = params.id;
+                }
+                return repo.select(query, options)
             })
             .then((result) => {
-                if (!result || result.length < 1) {
+                let d = (result && result.length > 0) ? result[0] : null;
+                if (params.id != 'new' && !d) {
                     throw {type: 'process', message: opts.collection + ' not found'};
                 }
-                let d = result[0];
+                if (params.id == 'new') {
+                    d = opts.createNew(params, d);
+                }
                 log.debug(opts.collection + ' found: ' + JSON.stringify(d));
                 return d;
             })
@@ -125,11 +149,14 @@ let crudServices = (opts) => {
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
-                return repo.save(data);
-            })
-            .then((result) => {
-                log.debug(opts.collection + ' updated');
-                return result;
+                return repo.save(data)
+                .then((result) => {
+                    log.debug(opts.collection + ' updated');
+                    return opts.postProcess('update', data, user)
+                    .then((d) => {
+                        return d || result;
+                    });
+                });
             })
             .catch((err) => {
                 log.error(err.message);
@@ -150,11 +177,14 @@ let crudServices = (opts) => {
                 let repo = Repository(opts.collection, user.username);
                 let query = {};
                 query[opts.collectionid] = params.id;
-                return repo.remove(query);
-            })
-            .then((result) => {
-                log.debug(opts.collection + ' removed');
-                return result;
+                return repo.remove(query)
+                .then((result) => {
+                    log.debug(opts.collection + ' removed');
+                    return opts.postProcess('remove', result, user)
+                    .then((d) => {
+                        return d || result;
+                    });
+                });
             })
             .catch((err) => {
                 log.error(err.message);
@@ -172,11 +202,14 @@ let crudServices = (opts) => {
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
-                return repo.remove({});
-            })
-            .then((result) => {
-                log.debug(opts.collection + ' removed');
-                return result;
+                return repo.remove({})
+                .then((result) => {
+                    log.debug(opts.collection + ' removed');
+                    return opts.postProcess('remove', result, user)
+                    .then((d) => {
+                        return d || result;
+                    });
+                });
             })
             .catch((err) => {
                 log.error(err.message);

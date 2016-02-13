@@ -38,6 +38,8 @@ describe('Transactions Service', () => {
 
 		env.params = {};
 
+		env.balances = sinon.stub().returns(Promise.accept());
+
 		env.crudServices = sandbox.require('../../src/lib/crud-services', {
 			requires: {
 				'../lib/repository': env.Repository,
@@ -47,6 +49,7 @@ describe('Transactions Service', () => {
         env.service = sandbox.require('../../src/services/transactions', {
             requires: {
                 '../lib/crud-services': env.crudServices,
+				'../services/balances': env.balances,
 				'lodash': _,
                 '../lib/log': env.log
             }
