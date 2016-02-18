@@ -23,7 +23,7 @@ describe('OAuth2 Service', () => {
             remove: sinon.stub(),
             save: sinon.stub()
         };
-        env.respository = sinon.stub().returns(env.repo);
+        env.repository = sinon.stub().returns(env.repo);
         env.user = {
             userid: 'user123',
             username: 'foo',
@@ -41,7 +41,7 @@ describe('OAuth2 Service', () => {
         env.oauth2 = sandbox.require('../../src/services/oauth2', {
             requires: {
                 'easy-pbkdf2': sinon.stub().returns(env.crypto),
-                '../lib/repository': env.respository,
+                '../lib/repository': env.repository,
                 '../lib/log': env.log
             }
         });
@@ -71,10 +71,10 @@ describe('OAuth2 Service', () => {
                     .catch(done);
                 });
                 it('should create the respositories', () => {
-                    expect(env.respository).to.have.been.calledTwice;
+                    expect(env.repository).to.have.been.calledTwice;
                 });
-                it('should create the user respository', () => {
-                    expect(env.respository).to.have.been.calledWith('users');
+                it('should create the user repository', () => {
+                    expect(env.repository).to.have.been.calledWith('users');
                 });
                 it('should fetch the user', () => {
                     expect(env.repo.select).to.have.been.calledOnce;
@@ -87,8 +87,8 @@ describe('OAuth2 Service', () => {
                     expect(env.crypto.verify).to.have.been.calledOnce;
                     expect(env.crypto.verify).to.have.been.calledWith(env.user.password.salt, env.user.password.hash, env.params.password, sinon.match.func);
                 });
-                it('should create the tokens respository', () => {
-                    expect(env.respository).to.have.been.calledWith('tokens');
+                it('should create the tokens repository', () => {
+                    expect(env.repository).to.have.been.calledWith('tokens');
                 });
                 it('should save the token', () => {
                     expect(env.repo.insert).to.have.been.calledOnce;
@@ -113,7 +113,7 @@ describe('OAuth2 Service', () => {
                     });
                 });
                 it('should not create the respositories', () => {
-                    expect(env.respository).to.not.have.been.called;
+                    expect(env.repository).to.not.have.been.called;
                 });
                 it('should not fetch the user', () => {
                     expect(env.repo.select).to.not.have.been.called;
@@ -147,7 +147,7 @@ describe('OAuth2 Service', () => {
                     });
                 });
                 it('should not create the respositories', () => {
-                    expect(env.respository).to.not.have.been.called;
+                    expect(env.repository).to.not.have.been.called;
                 });
                 it('should not fetch the user', () => {
                     expect(env.repo.select).to.not.have.been.called;
@@ -181,10 +181,10 @@ describe('OAuth2 Service', () => {
                     });
                 });
                 it('should create the respositories', () => {
-                    expect(env.respository).to.have.been.calledOnce;
+                    expect(env.repository).to.have.been.calledOnce;
                 });
-                it('should create the user respository', () => {
-                    expect(env.respository).to.have.been.calledWith('users');
+                it('should create the user repository', () => {
+                    expect(env.repository).to.have.been.calledWith('users');
                 });
                 it('should fetch the user', () => {
                     expect(env.repo.select).to.have.been.calledOnce;
@@ -220,10 +220,10 @@ describe('OAuth2 Service', () => {
                     });
                 });
                 it('should create the respositories', () => {
-                    expect(env.respository).to.have.been.calledOnce;
+                    expect(env.repository).to.have.been.calledOnce;
                 });
-                it('should create the user respository', () => {
-                    expect(env.respository).to.have.been.calledWith('users');
+                it('should create the user repository', () => {
+                    expect(env.repository).to.have.been.calledWith('users');
                 });
                 it('should fetch the user', () => {
                     expect(env.repo.select).to.have.been.calledOnce;
@@ -259,10 +259,10 @@ describe('OAuth2 Service', () => {
                     });
                 });
                 it('should create the respositories', () => {
-                    expect(env.respository).to.have.been.calledOnce;
+                    expect(env.repository).to.have.been.calledOnce;
                 });
-                it('should create the user respository', () => {
-                    expect(env.respository).to.have.been.calledWith('users');
+                it('should create the user repository', () => {
+                    expect(env.repository).to.have.been.calledWith('users');
                 });
                 it('should fetch the user', () => {
                     expect(env.repo.select).to.have.been.calledOnce;
@@ -298,10 +298,10 @@ describe('OAuth2 Service', () => {
                     });
                 });
                 it('should create the respositories', () => {
-                    expect(env.respository).to.have.been.calledOnce;
+                    expect(env.repository).to.have.been.calledOnce;
                 });
-                it('should create the user respository', () => {
-                    expect(env.respository).to.have.been.calledWith('users');
+                it('should create the user repository', () => {
+                    expect(env.repository).to.have.been.calledWith('users');
                 });
                 it('should fetch the user', () => {
                     expect(env.repo.select).to.have.been.calledOnce;
@@ -314,8 +314,8 @@ describe('OAuth2 Service', () => {
                     expect(env.crypto.verify).to.have.been.calledOnce;
                     expect(env.crypto.verify).to.have.been.calledWith(env.user.password.salt, env.user.password.hash, env.params.password, sinon.match.func);
                 });
-                it('should not create the tokens respository', () => {
-                    expect(env.respository).to.not.have.been.calledWith('tokens');
+                it('should not create the tokens repository', () => {
+                    expect(env.repository).to.not.have.been.calledWith('tokens');
                 });
                 it('should not save the token', () => {
                     expect(env.repo.insert).to.not.have.been.called;
@@ -349,7 +349,7 @@ describe('OAuth2 Service', () => {
                 });
 
                 it('should not create the respositories', () => {
-                    expect(env.respository).to.not.have.been.called;
+                    expect(env.repository).to.not.have.been.called;
                 });
                 it('should not fetch the user', () => {
                     expect(env.repo.select).to.not.have.been.called;
@@ -386,7 +386,7 @@ describe('OAuth2 Service', () => {
             });
 
             it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+                expect(env.repository).to.not.have.been.called;
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.called;
@@ -437,17 +437,17 @@ describe('OAuth2 Service', () => {
             });
 
             it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+                expect(env.repository).to.have.been.calledTwice;
                 expect(env.repo.select).to.have.been.calledTwice;
             });
-            it('should create the tokens respository', () => {
-                expect(env.respository).to.have.been.calledWith('tokens');
+            it('should create the tokens repository', () => {
+                expect(env.repository).to.have.been.calledWith('tokens');
             });
             it('should retrieve the token', () => {
                 expect(env.repo.select).to.have.been.calledWith({type: 'access', token: env.authorization.credentials});
             });
-            it('should create the user respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the user repository', () => {
+                expect(env.repository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
@@ -471,7 +471,7 @@ describe('OAuth2 Service', () => {
             });
 
             it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+                expect(env.repository).to.not.have.been.called;
                 expect(env.repo.select).to.not.have.been.called;
             });
             it('should not fetch any data', () => {
@@ -496,7 +496,7 @@ describe('OAuth2 Service', () => {
             });
 
             it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+                expect(env.repository).to.not.have.been.called;
                 expect(env.repo.select).to.not.have.been.called;
             });
             it('should not fetch any data', () => {
@@ -521,7 +521,7 @@ describe('OAuth2 Service', () => {
             });
 
             it('should not create the respositories', () => {
-                expect(env.respository).to.not.have.been.called;
+                expect(env.repository).to.not.have.been.called;
                 expect(env.repo.select).to.not.have.been.called;
             });
             it('should not fetch any data', () => {
@@ -546,17 +546,17 @@ describe('OAuth2 Service', () => {
             });
 
             it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+                expect(env.repository).to.have.been.calledOnce;
             });
-            it('should create the tokens respository', () => {
-                expect(env.respository).to.have.been.calledWith('tokens');
+            it('should create the tokens repository', () => {
+                expect(env.repository).to.have.been.calledWith('tokens');
             });
             it('should retrieve the token', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({type: 'access', token: env.authorization.credentials});
             });
-            it('should not create the user respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('users');
+            it('should not create the user repository', () => {
+                expect(env.repository).to.not.have.been.calledWith('users');
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({userid: env.token.userId});
@@ -581,17 +581,17 @@ describe('OAuth2 Service', () => {
             });
 
             it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledOnce;
+                expect(env.repository).to.have.been.calledOnce;
             });
-            it('should create the tokens respository', () => {
-                expect(env.respository).to.have.been.calledWith('tokens');
+            it('should create the tokens repository', () => {
+                expect(env.repository).to.have.been.calledWith('tokens');
             });
             it('should retrieve the token', () => {
                 expect(env.repo.select).to.have.been.calledOnce;
                 expect(env.repo.select).to.have.been.calledWith({type: 'access', token: env.authorization.credentials});
             });
-            it('should not create the user respository', () => {
-                expect(env.respository).to.not.have.been.calledWith('users');
+            it('should not create the user repository', () => {
+                expect(env.repository).to.not.have.been.calledWith('users');
             });
             it('should not fetch the user', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({userid: env.token.userId});
@@ -617,17 +617,17 @@ describe('OAuth2 Service', () => {
             });
 
             it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+                expect(env.repository).to.have.been.calledTwice;
                 expect(env.repo.select).to.have.been.calledTwice;
             });
-            it('should create the tokens respository', () => {
-                expect(env.respository).to.have.been.calledWith('tokens');
+            it('should create the tokens repository', () => {
+                expect(env.repository).to.have.been.calledWith('tokens');
             });
             it('should retrieve the token', () => {
                 expect(env.repo.select).to.have.been.calledWith({type: 'access', token: env.authorization.credentials});
             });
-            it('should create the user respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the user repository', () => {
+                expect(env.repository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
@@ -654,17 +654,17 @@ describe('OAuth2 Service', () => {
             });
 
             it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+                expect(env.repository).to.have.been.calledTwice;
                 expect(env.repo.select).to.have.been.calledTwice;
             });
-            it('should create the tokens respository', () => {
-                expect(env.respository).to.have.been.calledWith('tokens');
+            it('should create the tokens repository', () => {
+                expect(env.repository).to.have.been.calledWith('tokens');
             });
             it('should retrieve the token', () => {
                 expect(env.repo.select).to.have.been.calledWith({type: 'access', token: env.authorization.credentials});
             });
-            it('should create the user respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the user repository', () => {
+                expect(env.repository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});
@@ -691,17 +691,17 @@ describe('OAuth2 Service', () => {
             });
 
             it('should create the respositories', () => {
-                expect(env.respository).to.have.been.calledTwice;
+                expect(env.repository).to.have.been.calledTwice;
                 expect(env.repo.select).to.have.been.calledTwice;
             });
-            it('should create the tokens respository', () => {
-                expect(env.respository).to.have.been.calledWith('tokens');
+            it('should create the tokens repository', () => {
+                expect(env.repository).to.have.been.calledWith('tokens');
             });
             it('should retrieve the token', () => {
                 expect(env.repo.select).to.have.been.calledWith({type: 'access', token: env.authorization.credentials});
             });
-            it('should create the user respository', () => {
-                expect(env.respository).to.have.been.calledWith('users');
+            it('should create the user repository', () => {
+                expect(env.repository).to.have.been.calledWith('users');
             });
             it('should fetch the user', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: env.token.userId});

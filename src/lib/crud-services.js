@@ -27,6 +27,10 @@ var Repository = require('../lib/repository'),
             params:
             data:
         newOptions
+        preProcess
+            operation:
+            data:
+            user:
         postProcess
             operation:
             data:
@@ -47,6 +51,7 @@ let crudServices = (opts) => {
     opts.validators.remove = opts.validators.remove || validateTrue;
     opts.validators.removeAll = opts.validators.removeAll || validateTrue;
     opts.createNew = opts.createNew || ((params, d) => {return d;});
+    opts.preProcess = opts.preProcess || ((o,d,u) => { return Promise.accept(d); });
     opts.postProcess = opts.postProcess || ((o,d,u) => { return Promise.accept(d); });
 
     return {
@@ -60,8 +65,11 @@ let crudServices = (opts) => {
                 return retrieveUser(params.userid);
             })
             .then((user) => {
-                let repo = Repository(opts.collection, user.username);
-                return repo.insert(data)
+                return opts.preProcess('create', data, user)
+                .then((d) => {
+                    let repo = Repository(opts.collection, user.username);
+                    return repo.insert(d);
+                })
                 .then((result) => {
                     log.debug(opts.collection + ' created');
                     return opts.postProcess('create', data, user)
@@ -89,7 +97,7 @@ let crudServices = (opts) => {
                 let repo = Repository(opts.collection, user.username);
                 let query = {};
                 let options = opts.options;
-                if (params.id == 'new') {
+                if (params.id == 'new' && opts.newOptions) {
                     options = opts.newOptions();
                 }
                 else {
@@ -148,8 +156,11 @@ let crudServices = (opts) => {
                 return retrieveUser(params.userid);
             })
             .then((user) => {
-                let repo = Repository(opts.collection, user.username);
-                return repo.save(data)
+                return opts.preProcess('update', data, user)
+                .then((d) => {
+                    let repo = Repository(opts.collection, user.username);
+                    return repo.save(d);
+                })
                 .then((result) => {
                     log.debug(opts.collection + ' updated');
                     return opts.postProcess('update', data, user)
@@ -174,10 +185,13 @@ let crudServices = (opts) => {
                 return retrieveUser(params.userid);
             })
             .then((user) => {
-                let repo = Repository(opts.collection, user.username);
-                let query = {};
-                query[opts.collectionid] = params.id;
-                return repo.remove(query)
+                return opts.preProcess('remove', {}, user)
+                .then((d) => {
+                    let repo = Repository(opts.collection, user.username);
+                    let query = {};
+                    query[opts.collectionid] = params.id;
+                    return repo.remove(query);
+                })
                 .then((result) => {
                     log.debug(opts.collection + ' removed');
                     return opts.postProcess('remove', result, user)
@@ -201,14 +215,17 @@ let crudServices = (opts) => {
                 return retrieveUser(params.userid);
             })
             .then((user) => {
-                let repo = Repository(opts.collection, user.username);
-                return repo.remove({})
+                return opts.preProcess('remove', {}, user)
+                .then((d) => {
+                    let repo = Repository(opts.collection, user.username);
+                    return repo.remove({});
+                })
                 .then((result) => {
                     log.debug(opts.collection + ' removed');
                     return opts.postProcess('remove', result, user)
                     .then((d) => {
                         return d || result;
-                    });
+                    });                    
                 });
             })
             .catch((err) => {

@@ -1,6 +1,7 @@
 'use strict'
 var CrudServices = require('../lib/crud-services'),
     balances = require('../services/balances'),
+    nextSequence = require('../lib/next-sequence'),
     _ = require('lodash'),
     uuid = require('node-uuid'),
     log = require('../lib/log');
@@ -28,15 +29,6 @@ var checkTypes = (transaction) => {
     }
     else if (!_.isDate(transaction.when)) {
         transaction.when = new Date(transaction.when);
-    }
-}
-
-let nextSequence = (sequence) => {
-    try {
-        let seq = parseInt(sequence, 10);
-        return seq + 1;
-    } catch (e) {
-        return 1;
     }
 }
 
@@ -143,7 +135,7 @@ let opts = {
         };
     },
     postProcess(operation, transaction, user) {
-        // after an insert, update, or delete, must adjust the balance of all succeeding transactions and the account balance        
+        // after an insert, update, or delete, must adjust the balance of all succeeding transactions and the account balance
         return balances(operation, transaction, user);
     }
 };

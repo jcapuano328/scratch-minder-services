@@ -53,6 +53,7 @@ describe('Accounts Service', () => {
         env.service = sandbox.require('../../src/services/accounts', {
             requires: {
                 '../lib/crud-services': env.crudServices,
+				'../lib/repository': env.Repository,
                 '../lib/log': env.log
             }
         });
@@ -95,8 +96,7 @@ describe('Accounts Service', () => {
                 .catch(done);
             });
             it('should create the repositories', () => {
-                expect(env.Repository).to.have.been.calledTwice;
-                expect(env.Repository).to.have.been.calledWith('accounts', env.user.username);
+                expect(env.Repository).to.have.been.calledThrice;
             });
             it('should create the users repository', () => {
                 expect(env.Repository).to.have.been.calledWith('users');
@@ -109,8 +109,27 @@ describe('Accounts Service', () => {
                 expect(env.Repository).to.have.been.calledWith('accounts', env.user.username);
             });
             it('should insert the data', () => {
-                expect(env.repo.insert).to.have.been.calledOnce;
+                //expect(env.repo.insert).to.have.been.calledOnce;
                 expect(env.repo.insert).to.have.been.calledWith(env.account);
+            });
+			it('should create the transactions repository', () => {
+				expect(env.Repository).to.have.been.calledWith('transactions', env.user.username);
+            });
+            it('should insert the transaction', () => {
+                expect(env.repo.insert).to.have.been.calledTwice;
+				/*
+                expect(env.repo.insert).to.have.been.calledWith({
+	                "transactionid": '1',
+	                "accountid": env.account.accountid,
+	                "type": "set",
+	                "sequence": "",
+	                "category": "Balance",
+	                "description": "Opening balance",
+	                "amount": env.account.lastActivity.balance,
+	                "when": new Date(),
+	                "balance": env.account.lastActivity.balance
+	            });
+				*/
             });
         });
 
@@ -670,7 +689,7 @@ describe('Accounts Service', () => {
                 .catch(done);
             });
             it('should create the repositories', () => {
-                expect(env.Repository).to.have.been.calledTwice;
+                expect(env.Repository).to.have.been.calledThrice;
             });
             it('should create the users repository', () => {
                 expect(env.Repository).to.have.been.calledWith('users');
@@ -780,7 +799,7 @@ describe('Accounts Service', () => {
                 .catch(done);
             });
             it('should create the repositories', () => {
-                expect(env.Repository).to.have.been.calledTwice;
+                expect(env.Repository).to.have.been.calledThrice;
             });
             it('should create the users repository', () => {
                 expect(env.Repository).to.have.been.calledWith('users');

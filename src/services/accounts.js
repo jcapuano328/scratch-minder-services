@@ -1,10 +1,17 @@
 'use strict'
 var CrudServices = require('../lib/crud-services'),
+    Repository = require('../lib/repository'),
+    uuid = require('node-uuid'),
     log = require('../lib/log');
 
 let opts = {
     collection: 'accounts',
     collectionid: 'accountid',
+    options: {
+        sort: {
+            name: 1
+        }
+    },
     user: true,
     validators: {
         create(params, account) {
@@ -69,7 +76,57 @@ let opts = {
             log.debug('Validate remove all accounts');
             return Promise.accept(true);
         }
+    },
+    createNew(params, d) {
+        console.dir(d);
+        return {
+            accountid: uuid.v1(),
+            name: '',
+            number: '',
+            sequence: '',
+            lastActivity: {}
+        };
+    },
+    preProcess(operation, account, user) {
+        if (operation == 'create') {
+            let repo = Repository('transactions', user.username);
+            let txn = {
+                "transactionid": uuid.v1(),
+                "accountid": account.accountid,
+                "type": "set",
+                "sequence": "",
+                "category": "Balance",
+                "description": "Opening balance",
+                "amount": account.lastActivity.balance,
+                "when": new Date(),
+                "balance": account.lastActivity.balance
+            };
+            return repo.insert(txn)
+            .then((data) => {
+                account.lastActivity = {
+                    "transactionid": txn.transactionid,
+                    "type": txn.type,
+                    "sequence": txn.sequence,
+                    "category": txn.category,
+                    "description": txn.description,
+                    "amount": txn.amount,
+                    "when": txn.when,
+                    "balance": txn.balance
+                };
+                return account;
+            });
+        }
+        return Promise.accept(account);
+    },
+    postProcess(operation, account, user) {
+        if (operation == 'remove') {
+            // remove all transactions
+            let repo = Repository('transactions', user.username);
+            return repo.remove({accountid: account.accountid});
+        }
+        return Promise.accept(account);
     }
+
 };
 
 module.exports = CrudServices(opts);
