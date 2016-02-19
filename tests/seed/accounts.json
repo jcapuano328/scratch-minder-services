@@ -5,16 +5,7 @@
     "number": 436150,
     "name": "non",
     "sequence": 0,
-    "lastActivity": {
-      "transactionid": "50a0b61b-5bd1-44e4-8cf0-3783e354bbf4",
-      "type": "set",
-      "sequence": 0,
-      "category": "magna",
-      "description": "veniam eiusmod aliquip",
-      "amount": 364.6,
-      "when": ISODate('1971-08-17T00:05:24+00:00'),
-      "balance": 483.8
-    }
+    "balance": 483.8
   },
   {
     "_id": "5691655d27cf84167672e85c",
@@ -22,16 +13,7 @@
     "number": 458549,
     "name": "deserunt",
     "sequence": 1,
-    "lastActivity": {
-      "transactionid": "fad699fe-b7a4-4589-a12d-e81c66600348",
-      "type": "credit",
-      "sequence": 1,
-      "category": "quis",
-      "description": "aute esse quis",
-      "amount": 351.79,
-      "when": ISODate('1971-08-17T00:05:24+00:00'),
-      "balance": 15486.57
-    }
+    "balance": 15486.57
   },
   {
     "_id": "5691655d0a75def96eae8ae2",
@@ -39,16 +21,7 @@
     "number": 649371,
     "name": "reprehenderit",
     "sequence": 2,
-    "lastActivity": {
-      "transactionid": "9e938ae0-9a82-4c85-b70d-76546c01304a",
-      "type": "debit",
-      "sequence": 2,
-      "category": "amet",
-      "description": "aute esse et",
-      "amount": 223.7,
-      "when": ISODate('1971-08-17T00:05:24+00:00'),
-      "balance": 8671.74
-    }
+    "balance": 8671.74
   },
   {
     "_id": "5691655d6120997413cdaefa",
@@ -56,16 +29,7 @@
     "number": 433348,
     "name": "ullamco",
     "sequence": 3,
-    "lastActivity": {
-      "transactionid": "f909c38a-0d5b-4f8d-afb1-97bc8e2cd67c",
-      "type": "credit",
-      "sequence": 3,
-      "category": "occaecat",
-      "description": "eiusmod ea nulla",
-      "amount": 322.88,
-      "when": ISODate('1971-08-17T00:05:24+00:00'),
-      "balance": 2306.63
-    }
+    "balance": 2306.63
   },
   {
     "_id": "5691655da377a15460b1e5da",
@@ -73,15 +37,6 @@
     "number": 593706,
     "name": "consequat",
     "sequence": 4,
-    "lastActivity": {
-      "transactionid": "faac21f7-9055-4a9a-988c-38447ee3dae4",
-      "type": "set",
-      "sequence": 4,
-      "category": "sunt",
-      "description": "consequat fugiat aliqua",
-      "amount": 307.28,
-      "when": ISODate('1971-08-17T00:05:24+00:00'),
-      "balance": 11870.4
-    }
+    "balance": 11870.4
   }
 ]

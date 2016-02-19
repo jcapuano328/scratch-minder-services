@@ -32,14 +32,7 @@ describe('Balances Service', () => {
 
 		env.account = {
             "accountid": "1",
-            "balance": 500.00,
-            "lastActivity": {
-				"transactionid": "9",
-	            "type": "debit",
-	            "amount": 50.00,
-	            "when": new Date(),
-				"balance": 450.00
-            }
+            "balance": 500.00
         };
 
         env.transactions = [
@@ -128,7 +121,7 @@ describe('Balances Service', () => {
 
         env.balances = sandbox.require('../../src/services/balances', {
             requires: {
-                '../lib/repository': env.Repository,				
+                '../lib/repository': env.Repository,
                 '../lib/log': env.log
             }
         });

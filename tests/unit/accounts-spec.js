@@ -29,16 +29,7 @@ describe('Accounts Service', () => {
             "number": "11111",
             "name": "Checking",
             "sequence": "2345",
-            "balance": 5678.90,
-            "lastActivity": {
-                "transactionid": "908028408",
-                "type": "set",
-                "sequence": "BAL",
-                "category": "Balance",
-                "description": "Set the opening balance",
-                "amount": 5678.90,
-                "when": new Date()
-            }
+            "balance": 5678.90
         };
         env.dbaccount = _.extend({_id: 'uniqueid'}, env.user.account);
 
@@ -125,9 +116,9 @@ describe('Accounts Service', () => {
 	                "sequence": "",
 	                "category": "Balance",
 	                "description": "Opening balance",
-	                "amount": env.account.lastActivity.balance,
+	                "amount": env.account.balance,
 	                "when": new Date(),
-	                "balance": env.account.lastActivity.balance
+	                "balance": env.account.balance
 	            });
 				*/
             });

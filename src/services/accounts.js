@@ -84,10 +84,10 @@ let opts = {
             name: '',
             number: '',
             sequence: '',
-            lastActivity: {}
+            balance: 0
         };
     },
-    preProcess(operation, account, user) {
+    postProcess(operation, account, user) {
         if (operation == 'create') {
             let repo = Repository('transactions', user.username);
             let txn = {
@@ -97,29 +97,16 @@ let opts = {
                 "sequence": "",
                 "category": "Balance",
                 "description": "Opening balance",
-                "amount": account.lastActivity.balance,
+                "amount": account.balance,
                 "when": new Date(),
-                "balance": account.lastActivity.balance
+                "balance": account.balance
             };
             return repo.insert(txn)
             .then((data) => {
-                account.lastActivity = {
-                    "transactionid": txn.transactionid,
-                    "type": txn.type,
-                    "sequence": txn.sequence,
-                    "category": txn.category,
-                    "description": txn.description,
-                    "amount": txn.amount,
-                    "when": txn.when,
-                    "balance": txn.balance
-                };
                 return account;
             });
         }
-        return Promise.accept(account);
-    },
-    postProcess(operation, account, user) {
-        if (operation == 'remove') {
+        else if (operation == 'remove') {
             // remove all transactions
             let repo = Repository('transactions', user.username);
             return repo.remove({accountid: account.accountid});

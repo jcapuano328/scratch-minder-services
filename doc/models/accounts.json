@@ -3,14 +3,5 @@
     "number": string,
     "name": string,
     "sequence": string,
-    "lastActivity": {
-        "transactionid": string,
-        "type": "credit|debit|set",
-        "sequence": string,
-        "category": string,
-        "description": string,
-        "amount": number,
-        "when": datetime,
-        "balance": number
-    }
+    "balance": number    
 }
