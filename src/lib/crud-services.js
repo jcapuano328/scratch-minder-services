@@ -61,8 +61,8 @@ let crudServices = (opts) => {
             .then((valid) => {
                 return opts.validators.create(params, data);
             })
-            .then((valid) => {
-                return retrieveUser(params.userid);
+            .then((valid) => {                
+                return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
                 return opts.preProcess('create', data, user)
@@ -91,7 +91,7 @@ let crudServices = (opts) => {
                 return opts.validators.read(params);
             })
             .then((valid) => {
-                return retrieveUser(params.userid);
+                return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
@@ -129,7 +129,7 @@ let crudServices = (opts) => {
                 return opts.validators.readAll(params);
             })
             .then((valid) => {
-                return retrieveUser(params.userid);
+                return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
@@ -153,7 +153,7 @@ let crudServices = (opts) => {
                 return opts.validators.update(params, data);
             })
             .then((valid) => {
-                return retrieveUser(params.userid);
+                return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
                 return opts.preProcess('update', data, user)
@@ -182,7 +182,7 @@ let crudServices = (opts) => {
                 return opts.validators.remove(params);
             })
             .then((valid) => {
-                return retrieveUser(params.userid);
+                return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
                 return opts.preProcess('remove', {}, user)
@@ -212,7 +212,7 @@ let crudServices = (opts) => {
                 return opts.validators.removeAll(params);
             })
             .then((valid) => {
-                return retrieveUser(params.userid);
+                return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
                 return opts.preProcess('remove', {}, user)
@@ -225,7 +225,7 @@ let crudServices = (opts) => {
                     return opts.postProcess('remove', result, user)
                     .then((d) => {
                         return d || result;
-                    });                    
+                    });
                 });
             })
             .catch((err) => {
@@ -247,7 +247,10 @@ let validateUser = (includeuser, params) => {
 
 let validateTrue = () => { return Promise.accept(true); };
 
-let retrieveUser = (userid) => {
+let retrieveUser = (includeuser, userid) => {
+    if (!includeuser) {
+        return Promise.accept({});
+    }
     log.debug(userid);
     log.debug('retrieve user');
     let users = Repository('users');

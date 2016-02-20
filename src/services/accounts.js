@@ -77,8 +77,7 @@ let opts = {
             return Promise.accept(true);
         }
     },
-    createNew(params, d) {
-        console.dir(d);
+    createNew(params, d) {        
         return {
             accountid: uuid.v1(),
             name: '',
