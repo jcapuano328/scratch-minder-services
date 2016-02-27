@@ -29,6 +29,11 @@ describe('Users Service', () => {
 
 		env.params = {};
 
+		env.passwordSvc = {
+			verify: sinon.stub(),
+			generate: sinon.stub()
+		};
+
 		env.crudServices = sandbox.require('../../src/lib/crud-services', {
 			requires: {
 				'../lib/repository': env.Repository,
@@ -39,6 +44,7 @@ describe('Users Service', () => {
             requires: {
                 '../lib/crud-services': env.crudServices,
 				'../lib/repository': env.Repository,
+				'../lib/password': env.passwordSvc,
                 '../lib/log': env.log
             }
         });
@@ -385,4 +391,63 @@ describe('Users Service', () => {
             });
         });
     });
+
+	describe('reset password', () => {
+        beforeEach(() => {
+            env.handler = env.service.resetPassword;
+
+			env.params.id = 'user123';
+			env.data = {
+				currentpwd: 'foo',
+				newpwd: 'bar',
+				confirmpwd: 'bar'
+			};
+			env.oldpassword = {
+				salt: 'salt',
+				hash: 'hash'
+			};
+			env.newpassword = {
+				salt: 'salt2',
+				hash: 'hash2'
+			};
+			env.user.password = env.oldpassword;
+        });
+
+        describe('success', () => {
+            beforeEach((done) => {
+				env.passwordSvc.verify.returns(Promise.accept(true));
+				env.passwordSvc.generate.returns(Promise.accept(env.newpassword));
+                env.repo.select.returns(Promise.accept([env.user]));
+				env.repo.save.returns(Promise.accept([env.user]));
+
+                env.handler(env.params,env.data)
+                .then((data) => {
+					env.newuser = data;
+					done();
+				})
+                .catch(done);
+            });
+            it('should create the users repository', () => {
+				expect(env.Repository).to.have.been.calledOnce;
+                expect(env.Repository).to.have.been.calledWith('users');
+            });
+            it('should retrieve the user', () => {
+                expect(env.repo.select).to.have.been.calledWith({userid: env.params.id});
+            });
+			it('should verify the current password', () => {
+                expect(env.passwordSvc.verify).to.have.been.calledWith(env.data.currentpwd, env.oldpassword.salt, env.oldpassword.hash);
+            });
+			it('should generate the new password', () => {
+                expect(env.passwordSvc.generate).to.have.been.calledWith(env.data.newpwd);
+				expect(env.user).to.have.property('password', env.newpassword);
+            });
+			it('should save the user', () => {
+                expect(env.repo.save).to.have.been.calledWith(env.user);
+            });
+			it('should return the user', () => {
+                expect(env.newuser).to.exist;
+            });
+        });
+    });
+
 });

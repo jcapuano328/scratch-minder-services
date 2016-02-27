@@ -17,7 +17,8 @@ describe('users route', () => {
 			readAll: sinon.stub(),
 			update: sinon.stub(),
 			remove: sinon.stub(),
-			removeAll: sinon.stub()
+			removeAll: sinon.stub(),
+			resetPassword: sinon.stub()
 		};
 
         env.routes = sandbox.require('../../src/routes/users', {
@@ -31,7 +32,7 @@ describe('users route', () => {
     describe('interface', () => {
         it('should have a 6 routes', () => {
             expect(env.routes).to.be.an.array;
-            expect(env.routes).to.have.length(6);
+            expect(env.routes).to.have.length(7);
         });
         describe('create', () => {
             beforeEach(() => {
@@ -127,6 +128,24 @@ describe('users route', () => {
             });
             it('should have a uri', () => {
                 expect(env.route).to.have.property('uri', '/users');
+            });
+            it('should not be protected', () => {
+                expect(env.route).to.have.property('protected', true);
+            });
+            it('should have a handler', () => {
+                expect(env.route).to.respondTo('handler');
+            });
+        });
+
+		describe('reset password for user', () => {
+            beforeEach(() => {
+                env.route = env.routes[6];
+            });
+            it('should have a method', () => {
+                expect(env.route).to.have.property('method', 'put');
+            });
+            it('should have a uri', () => {
+                expect(env.route).to.have.property('uri', '/users/:id/reset');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);
@@ -457,6 +476,36 @@ describe('users route', () => {
                 it('should return result to the caller', () => {
                     expect(env.res.send).to.have.been.calledOnce;
                     expect(env.res.send).to.have.been.calledWith(200, true);
+                });
+            });
+        });
+
+		describe('reset password', () => {
+            beforeEach(() => {
+                env.handler = env.routes[6].handler;
+            });
+
+            describe('success', () => {
+                beforeEach((done) => {
+					env.req.params.id = 'user123';
+                    env.req.body = {
+						currentpwd: 'foo',
+						newpwd: 'bar',
+						confirmpwd: 'bar'
+					};
+					env.users.resetPassword.returns(Promise.accept(env.dbuser));
+
+                    env.handler(env.req,env.res,env.next)
+                    .then(() => {done();})
+                    .catch(done);
+                });
+				it('should invoke the users service', () => {
+                    expect(env.users.resetPassword).to.have.been.calledOnce;
+                    expect(env.users.resetPassword).to.have.been.calledWith(env.req.params, env.req.body);
+                });
+                it('should return result to the caller', () => {
+                    expect(env.res.send).to.have.been.calledOnce;
+                    expect(env.res.send).to.have.been.calledWith(200, env.dbuser);
                 });
             });
         });

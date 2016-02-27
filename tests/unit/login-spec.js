@@ -29,7 +29,7 @@ describe('Login Route', () => {
 
         env.login = sandbox.require('../../src/services/login', {
             requires: {
-                'easy-pbkdf2': sinon.stub().returns(env.crypto),
+                '../lib/password': env.crypto,
                 '../lib/repository': sinon.stub().returns(env.users),
                 '../lib/log': env.log
             }
@@ -48,7 +48,7 @@ describe('Login Route', () => {
         describe('success', () => {
             beforeEach((done) => {
                 env.users.select.returns(Promise.accept([env.dbuser]));
-                env.crypto.verify.yields(null, true);
+                env.crypto.verify.returns(Promise.accept(true));
 
                 env.login(env.username,env.password)
                 .then((result) => {
@@ -63,7 +63,7 @@ describe('Login Route', () => {
             });
             it('should verify the password', () => {
                 expect(env.crypto.verify).to.have.been.calledOnce;
-                expect(env.crypto.verify).to.have.been.calledWith(env.dbuser.password.salt, env.dbuser.password.hash, env.password, sinon.match.func);
+                expect(env.crypto.verify).to.have.been.calledWith(env.password, env.dbuser.password.salt, env.dbuser.password.hash);
             });
             it('should return user to the caller', () => {
                 expect(env.user).to.exist;
@@ -138,7 +138,7 @@ describe('Login Route', () => {
         describe('invalid password', () => {
             beforeEach((done) => {
                 env.users.select.returns(Promise.accept([env.dbuser]));
-                env.crypto.verify.yields(null, false);
+                env.crypto.verify.returns(Promise.accept(false));
 
 				env.login(env.username,env.password)
 				.then(done)
@@ -154,7 +154,7 @@ describe('Login Route', () => {
             });
             it('should verify the password', () => {
                 expect(env.crypto.verify).to.have.been.calledOnce;
-                expect(env.crypto.verify).to.have.been.calledWith(env.dbuser.password.salt, env.dbuser.password.hash, env.password, sinon.match.func);
+                expect(env.crypto.verify).to.have.been.calledWith(env.password, env.dbuser.password.salt, env.dbuser.password.hash);
             });
         });
     });

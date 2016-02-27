@@ -1,6 +1,6 @@
 'use strict'
-var easyPbkdf2 = require('easy-pbkdf2')(),
-    users = require('../lib/repository')('users'),
+var users = require('../lib/repository')('users'),
+    passwordSvc = require('../lib/password'),
     log = require('../lib/log');
 
 module.exports = {
@@ -21,14 +21,7 @@ module.exports = {
             }
 
             log.debug('user found, verify password');
-            return new Promise((resolve,reject) => {
-                easyPbkdf2.verify(user.password.salt, user.password.hash, password, function( err, valid ) {
-                    if (err) {
-                        return reject(err);
-                    }
-                    resolve(valid);
-                });
-            })
+            return passwordSvc.verify(password, user.password.salt, user.password.hash)
             .then((valid) => {
                 if (!valid) {
                     throw {type: 'process', message: 'Invalid Username/Password'};
