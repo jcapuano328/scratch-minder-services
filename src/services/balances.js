@@ -65,6 +65,8 @@ delete
 		update the account
 */
 let adjust = (balance, type, amount) => {
+    balance = typeof balance == 'string' ? parseFloat(balance) : balance;
+    amount  = typeof amount == 'string' ? parseFloat(amount) : amount;
     if (type == 'credit') {
         return balance + amount;
     } else if (type == 'debit') {
@@ -89,7 +91,7 @@ let getBalance = (operation, txn, repo) => {
 }
 
 module.exports = (operation, transaction, user) => {
-    log.debug('Post process ' + operation + ' for ' + user.username);    
+    log.debug('Post process ' + operation + ' for ' + user.username);
     let balance = transaction.balance;
     let transrepo = Repository('transactions', user.username);
     return getBalance(operation, transaction, transrepo)
