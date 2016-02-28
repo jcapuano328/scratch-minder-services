@@ -29,9 +29,9 @@ describe('Transactions route', () => {
     });
 
     describe('interface', () => {
-        it('should have a 6 routes', () => {
+        it('should have a 7 routes', () => {
             expect(env.routes).to.be.an.array;
-            expect(env.routes).to.have.length(6);
+            expect(env.routes).to.have.length(7);
         });
         describe('create', () => {
             beforeEach(() => {
@@ -127,6 +127,23 @@ describe('Transactions route', () => {
             });
             it('should have a uri', () => {
                 expect(env.route).to.have.property('uri', '/user/:userid/account/:accountid/transactions');
+            });
+            it('should not be protected', () => {
+                expect(env.route).to.have.property('protected', true);
+            });
+            it('should have a handler', () => {
+                expect(env.route).to.respondTo('handler');
+            });
+        });
+		describe('search', () => {
+            beforeEach(() => {
+                env.route = env.routes[6];
+            });
+            it('should have a method', () => {
+                expect(env.route).to.have.property('method', 'get');
+            });
+            it('should have a uri', () => {
+                expect(env.route).to.have.property('uri', '/user/:userid/accounts/:accountid/transactions/search/:kind/:search');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);

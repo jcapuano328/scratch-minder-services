@@ -16,6 +16,8 @@ var Repository = require('../lib/repository'),
                 params:
             readAll:
                 params:
+            search:
+                params
             update:
                 params:
                 data:
@@ -23,6 +25,8 @@ var Repository = require('../lib/repository'),
                 params:
             removeAll:
                 params:
+        search
+            params
         createNew
             params:
             data:
@@ -47,9 +51,11 @@ let crudServices = (opts) => {
     opts.validators.create = opts.validators.create || validateTrue;
     opts.validators.read = opts.validators.read || validateTrue;
     opts.validators.readAll = opts.validators.readAll || validateTrue;
+    opts.validators.search = opts.validators.search || validateTrue;
     opts.validators.update = opts.validators.update || validateTrue;
     opts.validators.remove = opts.validators.remove || validateTrue;
     opts.validators.removeAll = opts.validators.removeAll || validateTrue;
+    opts.search = opts.search || (() => {return {};});
     opts.createNew = opts.createNew || ((params, d) => {return d;});
     opts.preProcess = opts.preProcess || ((o,d,u) => { return Promise.accept(d); });
     opts.postProcess = opts.postProcess || ((o,d,u) => { return Promise.accept(d); });
@@ -61,7 +67,7 @@ let crudServices = (opts) => {
             .then((valid) => {
                 return opts.validators.create(params, data);
             })
-            .then((valid) => {                
+            .then((valid) => {
                 return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
@@ -134,6 +140,31 @@ let crudServices = (opts) => {
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
                 return repo.select({}, opts.options);
+            })
+            .then((result) => {
+                result = result || [];
+                log.debug(result.length + ' ' + opts.collection + ' found');
+                return result;
+            })
+            .catch((err) => {
+                log.error(err.message);
+                throw err;
+            });
+        },
+
+        search(params) {
+            log.info('Search ' + opts.collection);
+            return validateUser(opts.user, params)
+            .then((valid) => {
+                return opts.validators.search(params);
+            })
+            .then((valid) => {
+                return retrieveUser(opts.user, params.userid);
+            })
+            .then((user) => {
+                let repo = Repository(opts.collection, user.username);
+                let query = opts.search(params);                
+                return repo.select(query, opts.options);
             })
             .then((result) => {
                 result = result || [];

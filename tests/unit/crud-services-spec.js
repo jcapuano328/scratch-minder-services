@@ -28,10 +28,12 @@ describe('CRUD Services', () => {
 				create: sinon.stub(),
 				read: sinon.stub(),
 				readAll: sinon.stub(),
+				search: sinon.stub(),
 				update: sinon.stub(),
 				remove: sinon.stub(),
 				removeAll: sinon.stub()
 			},
+			search: sinon.stub(),
 			createNew: sinon.stub(),
 			newOptions: sinon.stub()
 	    };
@@ -66,6 +68,9 @@ describe('CRUD Services', () => {
         });
 		it('should have a readAll', () => {
             expect(env.service).to.respondTo('readAll');
+        });
+		it('should have a search', () => {
+            expect(env.service).to.respondTo('search');
         });
 		it('should have a update', () => {
             expect(env.service).to.respondTo('update');
@@ -482,6 +487,124 @@ describe('CRUD Services', () => {
             });
             it('should not select the stuff', () => {
                 expect(env.repo.select).to.not.have.been.calledWith({});
+            });
+        });
+    });
+
+	describe('search', () => {
+        beforeEach(() => {
+            env.handler = env.service.search;
+        });
+
+        describe('success', () => {
+            beforeEach((done) => {
+                env.params.userid = 'user123';
+                env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
+                env.repo.select.onSecondCall().returns(Promise.accept([env.dbstuff]));
+				env.params.key = 'key1';
+				env.params.value = 'value1';
+				env.opts.validators.search.returns(Promise.accept(true));
+				env.opts.search.returns({
+					key: env.params.key,
+					value: env.params.value
+				});
+
+                env.handler(env.params)
+				.then((result) => {
+					env.result = result;
+					done();
+				})
+				.catch(done);
+            });
+            it('should create the respositories', () => {
+                expect(env.respository).to.have.been.calledTwice;
+            });
+            it('should create the users respository', () => {
+                expect(env.respository).to.have.been.calledWith('users');
+            });
+            it('should create the stuffs respository', () => {
+                expect(env.respository).to.have.been.calledWith('stuffs', env.user.username);
+            });
+            it('should select the data', () => {
+                expect(env.repo.select).to.have.been.calledTwice;
+            });
+            it('should select the user', () => {
+                expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
+            });
+            it('should select the stuff', () => {
+                expect(env.repo.select).to.have.been.calledWith({key: 'key1', value: 'value1'});
+            });
+            it('should return stuff', () => {
+                expect(env.result).to.exist;
+            });
+        });
+
+        describe('user missing', () => {
+            beforeEach((done) => {
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'User id missing');
+					done();
+				});
+            });
+            it('should not create respositories', () => {
+                expect(env.respository).to.not.have.been.called;
+            });
+            it('should not select data', () => {
+                expect(env.repo.select).to.not.have.been.called;
+            });
+        });
+
+        describe('keys missing', () => {
+            beforeEach((done) => {
+                env.params.userid = 'user123';
+				env.opts.validators.search.returns(Promise.reject({type: 'validation', message: 'key missing'}));
+
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'validation');
+					expect(err).to.have.property('message', 'key missing');
+					done();
+				});
+            });
+            it('should not create respositories', () => {
+                expect(env.respository).to.not.have.been.called;
+            });
+            it('should not select data', () => {
+                expect(env.repo.select).to.not.have.been.called;
+            });
+        });
+
+        describe('user not found', () => {
+            beforeEach((done) => {
+                env.params.userid = 'user123';
+                env.repo.select.onFirstCall().returns(Promise.accept([]));
+
+				env.handler(env.params)
+				.then(done)
+                .catch((err) => {
+					expect(err).to.have.property('type', 'process');
+					expect(err).to.have.property('message', 'User not found');
+					done();
+				});
+            });
+            it('should create the respositories', () => {
+                expect(env.respository).to.have.been.calledOnce;
+            });
+            it('should create the users respository', () => {
+                expect(env.respository).to.have.been.calledWith('users');
+            });
+            it('should not create the stuffs respository', () => {
+                expect(env.respository).to.not.have.been.calledWith('stuffs', env.user.username);
+            });
+            it('should select the data', () => {
+                expect(env.repo.select).to.have.been.calledOnce;
+            });
+            it('should select the user', () => {
+                expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
         });
     });

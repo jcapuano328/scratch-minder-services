@@ -114,6 +114,13 @@ let opts = {
             return Promise.accept(true);
         }
     },
+    search(params) {
+        let query = {};
+        if (params.kind == 'description') {
+            query.description = new RegExp(params.search);
+        }        
+        return query;
+    },
     createNew(params, d) {
         return {
             transactionid: uuid.v1(),
