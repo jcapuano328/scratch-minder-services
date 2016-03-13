@@ -396,6 +396,7 @@ describe('Transactions Service', () => {
         describe('success', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
+				env.params.accountid = 'abc123';
                 env.repo.select.onFirstCall().returns(Promise.accept([env.user]));
                 env.repo.select.onSecondCall().returns(Promise.accept([env.dbtransaction, env.dbtransaction]));
 
@@ -422,7 +423,7 @@ describe('Transactions Service', () => {
                 expect(env.repo.select).to.have.been.calledWith({userid: 'user123'});
             });
             it('should select the transaction', () => {
-                expect(env.repo.select).to.have.been.calledWith({});
+                expect(env.repo.select).to.have.been.calledWith({accountid: 'abc123'});
             });
             it('should return transactions', () => {
                 expect(env.result).to.exist;
@@ -452,6 +453,7 @@ describe('Transactions Service', () => {
         describe('user not found', () => {
             beforeEach((done) => {
                 env.params.userid = 'user123';
+				env.params.accountid = 'abc123';
                 env.repo.select.onFirstCall().returns(Promise.accept([]));
 
 				env.handler(env.params)

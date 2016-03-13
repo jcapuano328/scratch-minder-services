@@ -72,9 +72,14 @@ let opts = {
                 resolve(true);
             });
         },
-        readAll() {
+        readAll(params) {
             log.debug('Validate read all transactions');
-            return Promise.accept(true);
+            return new Promise((resolve,reject) => {
+                if (!params || !params.accountid) {
+                    return reject({type: 'validation', message: 'Account id missing'});
+                }
+                resolve(true);
+            });
         },
         update(params, transaction) {
             log.debug('Validate update transaction');
@@ -116,9 +121,18 @@ let opts = {
     },
     search(params) {
         let query = {};
+        if (params.accountid) {
+            query.accountid = params.accountid;
+        }
         if (params.kind == 'description') {
             query.description = new RegExp(params.search);
-        }        
+        }
+        if (params.startdate && params.enddate) {
+            query.when = {
+                "$gte": new Date(params.startdate),
+                "$lte": new Date(params.enddate)
+            };
+        }
         return query;
     },
     createNew(params, d) {

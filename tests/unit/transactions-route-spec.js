@@ -22,6 +22,7 @@ describe('Transactions route', () => {
 
         env.routes = sandbox.require('../../src/routes/transactions', {
             requires: {
+				'lodash': _,
                 '../services/transactions': env.transactions,
                 '../lib/log': env.log
             }
@@ -29,9 +30,9 @@ describe('Transactions route', () => {
     });
 
     describe('interface', () => {
-        it('should have a 7 routes', () => {
+        it('should have a 9 routes', () => {
             expect(env.routes).to.be.an.array;
-            expect(env.routes).to.have.length(7);
+            expect(env.routes).to.have.length(9);
         });
         describe('create', () => {
             beforeEach(() => {
@@ -144,6 +145,40 @@ describe('Transactions route', () => {
             });
             it('should have a uri', () => {
                 expect(env.route).to.have.property('uri', '/user/:userid/accounts/:accountid/transactions/search/:kind/:search');
+            });
+            it('should not be protected', () => {
+                expect(env.route).to.have.property('protected', true);
+            });
+            it('should have a handler', () => {
+                expect(env.route).to.respondTo('handler');
+            });
+        });
+		describe('range', () => {
+            beforeEach(() => {
+                env.route = env.routes[7];
+            });
+            it('should have a method', () => {
+                expect(env.route).to.have.property('method', 'get');
+            });
+            it('should have a uri', () => {
+                expect(env.route).to.have.property('uri', '/user/:userid/accounts/:accountid/transactions/startdate/:startdate/enddate/:enddate');
+            });
+            it('should not be protected', () => {
+                expect(env.route).to.have.property('protected', true);
+            });
+            it('should have a handler', () => {
+                expect(env.route).to.respondTo('handler');
+            });
+        });
+		describe('summary', () => {
+            beforeEach(() => {
+                env.route = env.routes[8];
+            });
+            it('should have a method', () => {
+                expect(env.route).to.have.property('method', 'get');
+            });
+            it('should have a uri', () => {
+                expect(env.route).to.have.property('uri', '/user/:userid/accounts/:accountid/transactions/startdate/:startdate/enddate/:enddate/:groupby');
             });
             it('should not be protected', () => {
                 expect(env.route).to.have.property('protected', true);

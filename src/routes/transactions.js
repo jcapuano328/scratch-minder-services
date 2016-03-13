@@ -1,5 +1,6 @@
 'use strict'
-var CrudRoutes = require('../lib/crud-routes'),
+var _ = require('lodash'),
+    CrudRoutes = require('../lib/crud-routes'),
     transactions = require('../services/transactions'),
     log = require('../lib/log');
 
@@ -33,5 +34,43 @@ routes.push({
     }
 });
 
+
+routes.push({
+    method: 'get',
+    uri: '/user/:userid/accounts/:accountid/transactions/startdate/:startdate/enddate/:enddate',
+    protected: true,
+    handler: (req,res,next) => {
+        log.info('Retrieve Transactions from ' + req.params.startdate + '-' + req.params.enddate);
+        return transactions.search(req.params)
+        .then((data) => {
+            res.send(200, data);
+        })
+        .catch((err) => {
+            let code = err.type === 'validation' ? 400 : 500;
+            log.error('Error searching transactions: ' + err.message);
+            res.send(400, err.message);
+        });
+    }
+});
+
+routes.push({
+    method: 'get',
+    uri: '/user/:userid/accounts/:accountid/transactions/startdate/:startdate/enddate/:enddate/:groupby',
+    protected: true,
+    handler: (req,res,next) => {
+        log.info('Retrieve Transactions from ' + req.params.startdate + ' to ' + req.params.enddate);
+        return transactions.search(req.params)
+        .then((data) => {
+            log.debug('Grouping by ' + req.params.groupby);
+            let a = _.groupBy(data, req.params.groupby);
+            res.send(200, a);
+        })
+        .catch((err) => {
+            let code = err.type === 'validation' ? 400 : 500;
+            log.error('Error searching transactions: ' + err.message);
+            res.send(400, err.message);
+        });
+    }
+});
 
 module.exports = routes;

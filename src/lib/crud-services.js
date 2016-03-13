@@ -138,8 +138,9 @@ let crudServices = (opts) => {
                 return retrieveUser(opts.user, params.userid);
             })
             .then((user) => {
+                let query = opts.search(params) || {};
                 let repo = Repository(opts.collection, user.username);
-                return repo.select({}, opts.options);
+                return repo.select(query, opts.options);
             })
             .then((result) => {
                 result = result || [];
@@ -163,7 +164,7 @@ let crudServices = (opts) => {
             })
             .then((user) => {
                 let repo = Repository(opts.collection, user.username);
-                let query = opts.search(params);                
+                let query = opts.search(params);
                 return repo.select(query, opts.options);
             })
             .then((result) => {
