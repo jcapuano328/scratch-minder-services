@@ -31,6 +31,7 @@ var Repository = require('../lib/repository'),
             params:
             data:
         newOptions
+        createDoc
         preProcess
             operation:
             data:
@@ -57,6 +58,7 @@ let crudServices = (opts) => {
     opts.validators.removeAll = opts.validators.removeAll || validateTrue;
     opts.search = opts.search || (() => {return {};});
     opts.createNew = opts.createNew || ((params, d) => {return d;});
+    opts.createDoc = opts.createObject || ((d) => {return d;});
     opts.preProcess = opts.preProcess || ((o,d,u) => { return Promise.accept(d); });
     opts.postProcess = opts.postProcess || ((o,d,u) => { return Promise.accept(d); });
 
@@ -120,7 +122,7 @@ let crudServices = (opts) => {
                     d = opts.createNew(params, d);
                 }
                 log.debug(opts.collection + ' found: ' + JSON.stringify(d));
-                return d;
+                return opts.createDoc(d);
             })
             .catch((err) => {
                 log.error(err.message);
@@ -145,7 +147,7 @@ let crudServices = (opts) => {
             .then((result) => {
                 result = result || [];
                 log.debug(result.length + ' ' + opts.collection + ' found');
-                return result;
+                return result.map(opts.createDoc);
             })
             .catch((err) => {
                 log.error(err.message);
@@ -170,7 +172,7 @@ let crudServices = (opts) => {
             .then((result) => {
                 result = result || [];
                 log.debug(result.length + ' ' + opts.collection + ' found');
-                return result;
+                return result.map(opts.createDoc);
             })
             .catch((err) => {
                 log.error(err.message);
@@ -197,7 +199,7 @@ let crudServices = (opts) => {
                     log.debug(opts.collection + ' updated');
                     return opts.postProcess('update', data, user)
                     .then((d) => {
-                        return d || result;
+                        return opts.createDoc(d || result);
                     });
                 });
             })

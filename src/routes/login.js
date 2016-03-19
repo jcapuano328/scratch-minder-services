@@ -22,12 +22,12 @@ module.exports = [
             })
             .then((user) => {
                 log.info('Login request successful');
-                let usr = _.pick(user, 'userid', 'username', 'firstname', 'lastname', 'email', 'roles', 'preferredAccount');
+                let usr = _.pick(user, 'userid', 'username', 'firstname', 'lastname', 'email', 'roles', 'homeView', 'preferredAccount');
                 log.trace(JSON.stringify(usr));
                 res.send(200, usr);
             })
             .catch((err) => {
-                log.error(err);
+                log.error(err.message || err);
                 let code = err.type === 'process' ? 401 : 500;
                 res.send(code, err);
             });

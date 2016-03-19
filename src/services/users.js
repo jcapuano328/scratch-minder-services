@@ -88,7 +88,20 @@ let opts = {
             status: 'active',
             roles: {},
             password: {},
-            preferredAccount: null
+            preferredAccount: null,
+            homeView: 'summary'
+        };
+    },
+    createDoc(d) {
+        return {
+            userid: d.userid,
+            username: d.username,
+            firstname: d.firstname,
+            lastname: d.lastname,
+            email: d.email,
+            roles: d.roles,
+            homeView: d.homeView,
+            preferredAccount: d.preferredAccount
         };
     }
 };

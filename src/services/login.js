@@ -31,7 +31,7 @@ module.exports = {
             });
         })
         .catch((err) => {
-            log.error(err);
+            log.error(err.message || err);
             throw err;
         });
     }
